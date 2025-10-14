@@ -10,6 +10,7 @@
 import SwiftUI
 import MapKit
 
+
 struct ChatterMapView: View {
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 44.4759, longitude: -73.2121), // Burlington, VT
@@ -18,9 +19,25 @@ struct ChatterMapView: View {
     var body : some View {
         Map(coordinateRegion: $region)
             .ignoresSafeArea()
+        // TODO: find better way to make bottom button area
+        Spacer()
+        Spacer()
+        Spacer()
+        Spacer()
+        HStack{
+            Spacer()
+            Button("routes", action: {})
+            Spacer()
+            Button("write note", action: {})
+            Spacer()
+            Button("profile", action: {})
+            Spacer()
+        }
+        Spacer()
     }
+    
 }
 
 #Preview {
-    ContentView()
+    ChatterMapView()
 }
