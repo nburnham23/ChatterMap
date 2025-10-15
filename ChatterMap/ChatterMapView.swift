@@ -43,15 +43,14 @@ struct ChatterMapView: View {
         Spacer()
         HStack{
             if !showRoutesView && !showNewNoteView && !showProfileView {
-              Text("Back")
+                Spacer()
+                Button("routes", action: {toggleRoutesView()})
+                Spacer()
+                Button("write note", action: {toggleNewNoteView()})
+                Spacer()
+                Button("profile", action: {toggleProfileView()})
+                Spacer()
             }
-            Spacer()
-            Button("routes", action: {})
-            Spacer()
-            Button("write note", action: {})
-            Spacer()
-            Button("profile", action: {})
-            Spacer()
         }
         Spacer()
     }
