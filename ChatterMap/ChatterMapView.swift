@@ -17,6 +17,9 @@ struct ChatterMapView: View {
     @State private var showNewNoteView = false
     @State private var showProfileView = false
     
+    let manager = CLLocationManager()
+    @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
+    
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 44.4759, longitude: -73.2121), // Burlington, VT
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
@@ -39,7 +42,16 @@ struct ChatterMapView: View {
     }
     
     var body : some View {
-        Map(coordinateRegion: $region)
+        //Map(coordinateRegion: $region)
+        Map(position: $cameraPosition){
+            UserAnnotation()
+        }
+        .mapControls{
+            MapUserLocationButton()
+        }
+        .onAppear {
+            manager.requestWhenInUseAuthorization()
+        }
             .ignoresSafeArea()
         // TODO: find better way to make bottom button area
         Spacer()
