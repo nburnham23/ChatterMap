@@ -20,7 +20,7 @@ struct ChatterMapView: View {
         center: CLLocationCoordinate2D(latitude: 44.4759, longitude: -73.2121), // Burlington, VT
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
-    
+    test
     func toggleRoutesView() {
         showRoutesView = !showRoutesView
     }
