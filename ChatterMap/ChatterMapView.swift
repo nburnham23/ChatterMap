@@ -12,6 +12,7 @@ import MapKit
 
 
 struct ChatterMapView: View {
+    @State private var showMapView = true
     @State private var showRoutesView = false
     @State private var showNewNoteView = false
     @State private var showProfileView = false
@@ -20,7 +21,11 @@ struct ChatterMapView: View {
         center: CLLocationCoordinate2D(latitude: 44.4759, longitude: -73.2121), // Burlington, VT
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
-    test
+    
+    func toggleMapView() {
+        showMapView = !showMapView
+    }
+    
     func toggleRoutesView() {
         showRoutesView = !showRoutesView
     }
