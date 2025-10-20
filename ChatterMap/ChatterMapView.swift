@@ -26,37 +26,21 @@ struct ChatterMapView: View {
     )
     
     var body : some View {
-        //Map(coordinateRegion: $region)
-        Map(position: $cameraPosition){
-            UserAnnotation()
-        }
-        .mapControls{
-            MapUserLocationButton()
-        }
-        .onAppear {
-            manager.requestWhenInUseAuthorization()
-        }
-            .ignoresSafeArea()
-        if showMapView {
-            MapView(showMapView: $showMapView,
-                    showRoutesView: $showRoutesView,
-                    showNewNoteView: $showNewNoteView,
-                    showProfileView: $showProfileView)
-        } else if showRoutesView {
-            RoutesView(showMapView: $showMapView,
-                       showRoutesView: $showRoutesView,
-                       showNewNoteView: $showNewNoteView,
-                       showProfileView: $showProfileView)
-        } else if showNewNoteView {
-            NewNoteView(showMapView: $showMapView,
+        ZStack {
+            Map(coordinateRegion: $region)
+                .ignoresSafeArea()
+            if showMapView {
+                MapView(showMapView: $showMapView,
                         showRoutesView: $showRoutesView,
                         showNewNoteView: $showNewNoteView,
                         showProfileView: $showProfileView)
-        } else if showProfileView {
-            ProfileView(showMapView: $showMapView,
-                        showRoutesView: $showRoutesView,
-                        showNewNoteView: $showNewNoteView,
-                        showProfileView: $showProfileView)
+            } else if showRoutesView {
+                RoutesView()
+            } else if showNewNoteView {
+                NewNoteView()
+            } else if showProfileView {
+                ProfileView()
+            }
         }
     }
     

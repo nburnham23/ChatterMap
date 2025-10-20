@@ -7,33 +7,67 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct MapView: View {
+    @Binding var showMapView: Bool
     @Binding var showRoutesView: Bool
     @Binding var showNewNoteView: Bool
     @Binding var showProfileView: Bool
-    
+
     var body: some View {
-        HStack{
+        VStack {
             Spacer()
-            Spacer()
-            Spacer()
-            Spacer()
-            Button("routes", action: {
-                showMapView = false
-                showRoutesView = true
-                showNewNoteView = false
-                showProfileView = false).frame(width: 100, height: 100) .foregroundColor(Color.white) .background(Color.blue) .clipShape(Circle()) Spacer()
-                Button("write note", action: {
+            HStack {
+                Spacer()
+                Button("routes") {
                     showMapView = false
                     showRoutesView = true
                     showNewNoteView = false
-                    showProfileView = false}).frame(width: 100, height: 100) .foregroundColor(Color.white) .background(Color.blue) .clipShape(Circle()) Spacer()
-                Button("profile", action: {
+                    showProfileView = false
+                }
+                .frame(width: 100, height: 100)
+                .foregroundColor(.white)
+                .background(Color.blue)
+                .clipShape(Circle())
+
+                Spacer()
+                Button("write note") {
                     showMapView = false
-                    showRoutesView = true
+                    showRoutesView = false
+                    showNewNoteView = true
+                    showProfileView = false
+                }
+                .frame(width: 100, height: 100)
+                .foregroundColor(.white)
+                .background(Color.blue)
+                .clipShape(Circle())
+
+                Spacer()
+                Button("profile") {
+                    showMapView = false
+                    showRoutesView = false
                     showNewNoteView = false
-                    showProfileView = false}).frame(width: 100, height: 100) .foregroundColor(Color.white) .background(Color.blue) .clipShape(Circle()) Spacer() } } }
-    
-#Preview { RoutesView() }
+                    showProfileView = true
+                }
+                .frame(width: 100, height: 100)
+                .foregroundColor(.white)
+                .background(Color.blue)
+                .clipShape(Circle())
+
+                Spacer()
+            }
+        }
+    }
 }
+    
+#Preview {
+    MapView(
+        showMapView: .constant(true),
+        showRoutesView: .constant(false),
+        showNewNoteView: .constant(false),
+        showProfileView: .constant(false)
+    )
+}
+
 
