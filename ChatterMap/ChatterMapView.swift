@@ -22,54 +22,30 @@ struct ChatterMapView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     )
     
-    func toggleMapView() {
-        showMapView = !showMapView
-    }
-    
-    func toggleRoutesView() {
-        showRoutesView = !showRoutesView
-    }
-    
-    func toggleNewNoteView() {
-        showNewNoteView = !showNewNoteView
-    }
-    
-    func toggleProfileView() {
-        showProfileView = !showProfileView
-    }
-    
     var body : some View {
         Map(coordinateRegion: $region)
             .ignoresSafeArea()
-        // TODO: find better way to make bottom button area
-        Spacer()
-        Spacer()
-        Spacer()
-        Spacer()
-        HStack{
-            if !showRoutesView && !showNewNoteView && !showProfileView {
-                Spacer()
-                Button("routes", action: {toggleRoutesView()})
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(Color.white)
-                    .background(Color.blue)
-                    .clipShape(Circle())
-                Spacer()
-                Button("write note", action: {toggleNewNoteView()})
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(Color.white)
-                    .background(Color.blue)
-                    .clipShape(Circle())
-                Spacer()
-                Button("profile", action: {toggleProfileView()})
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(Color.white)
-                    .background(Color.blue)
-                    .clipShape(Circle())
-                Spacer()
-            }
+        if showMapView {
+            MapView(showMapView: $showMapView,
+                    showRoutesView: $showRoutesView,
+                    showNewNoteView: $showNewNoteView,
+                    showProfileView: $showProfileView)
+        } else if showRoutesView {
+            RoutesView(showMapView: $showMapView,
+                       showRoutesView: $showRoutesView,
+                       showNewNoteView: $showNewNoteView,
+                       showProfileView: $showProfileView)
+        } else if showNewNoteView {
+            NewNoteView(showMapView: $showMapView,
+                        showRoutesView: $showRoutesView,
+                        showNewNoteView: $showNewNoteView,
+                        showProfileView: $showProfileView)
+        } else if showProfileView {
+            ProfileView(showMapView: $showMapView,
+                        showRoutesView: $showRoutesView,
+                        showNewNoteView: $showNewNoteView,
+                        showProfileView: $showProfileView)
         }
-        Spacer()
     }
     
 }
