@@ -45,10 +45,22 @@ struct ChatterMapView: View {
             if !showRoutesView && !showNewNoteView && !showProfileView {
                 Spacer()
                 Button("routes", action: {toggleRoutesView()})
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(Color.white)
+                    .background(Color.blue)
+                    .clipShape(Circle())
                 Spacer()
                 Button("write note", action: {toggleNewNoteView()})
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(Color.white)
+                    .background(Color.blue)
+                    .clipShape(Circle())
                 Spacer()
                 Button("profile", action: {toggleProfileView()})
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(Color.white)
+                    .background(Color.blue)
+                    .clipShape(Circle())
                 Spacer()
             }
         }
