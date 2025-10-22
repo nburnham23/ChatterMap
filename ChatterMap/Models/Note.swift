@@ -13,3 +13,4 @@ struct Note: Identifiable, Codable {
     var voteCount: Int
     var comments: [String]
 }
+
