@@ -3,8 +3,8 @@
 //  ChatterMap
 //
 //  Created by Noah Burnham on 10/15/25.
-//  Code authored by Deslio Neto at Medium
-//  from https://medium.com/@desilio/getting-user-location-with-swiftui-1f79d23c2321
+//  Code authored by  Stewart Lynch
+//  from https://www.youtube.com/watch?v=xIU0PtHiwtg
 
 import Foundation
 import SwiftUI
