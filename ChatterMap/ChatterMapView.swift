@@ -17,7 +17,7 @@ struct ChatterMapView: View {
     @State private var showNewNoteView = false
     @State private var showProfileView = false
     
-    let manager = CLLocationManager()
+    @Environment(LocationManager.self) var locationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     
     @State private var region = MKCoordinateRegion(
@@ -27,8 +27,14 @@ struct ChatterMapView: View {
     
     var body : some View {
         ZStack {
-            Map(coordinateRegion: $region)
+            Map(position: $cameraPosition)
                 .ignoresSafeArea()
+                .onAppear{
+                    updateCameraPosition()
+                }
+                .mapControls{
+                    MapUserLocationButton()
+                }
             if showMapView {
                 MapView(showMapView: $showMapView,
                         showRoutesView: $showRoutesView,
@@ -43,9 +49,23 @@ struct ChatterMapView: View {
             }
         }
     }
-    
+    func updateCameraPosition(){
+        if let userLocation = locationManager.userLocation{
+            let userRegion = MKCoordinateRegion(
+                center: userLocation.coordinate,
+                span: MKCoordinateSpan(
+                    latitudeDelta: 0.15,
+                    longitudeDelta: 0.15
+                )
+            )
+            withAnimation{
+                cameraPosition = .region(userRegion)
+            }
+        }
+    }
 }
 
 #Preview {
     ChatterMapView()
+        .environment(LocationManager())
 }

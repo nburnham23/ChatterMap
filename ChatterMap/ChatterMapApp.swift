@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct ChatterMapApp: App {
+    @State private var locationManager = LocationManager()
     var body: some Scene {
         WindowGroup {
-            ChatterMapView()
+            if locationManager.isAuthorized{
+                ChatterMapView()
+            }else{
+                LocationDeniedView()
+            }
         }
+        .environment(locationManager)
     }
 }
