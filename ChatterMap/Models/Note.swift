@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct Note: Identifiable, Codable {
+    var id: String
+    var noteText: String
+    var voteCount: Int
+    var comments: [String]
+}
