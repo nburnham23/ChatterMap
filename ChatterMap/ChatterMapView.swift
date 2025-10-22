@@ -10,7 +10,6 @@
 import SwiftUI
 import MapKit
 
-
 struct ChatterMapView: View {
     @State private var showMapView = true
     @State private var showRoutesView = false
@@ -20,14 +19,13 @@ struct ChatterMapView: View {
     @Environment(LocationManager.self) var locationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 44.4759, longitude: -73.2121), // Burlington, VT
-        span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
-    )
     
     var body : some View {
         ZStack {
-            Map(position: $cameraPosition)
+            Spacer()
+            Map(position: $cameraPosition) {
+                UserAnnotation()
+            }
                 .ignoresSafeArea()
                 .onAppear{
                     updateCameraPosition()
