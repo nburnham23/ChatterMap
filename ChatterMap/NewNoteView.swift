@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct NewNoteView: View {
     @Binding var showMapView: Bool
     @Binding var showRoutesView: Bool
@@ -14,6 +15,7 @@ struct NewNoteView: View {
     @Binding var showProfileView: Bool
     
     @State private var noteText = ""
+    let firestoreService = FirestoreService()
     
     var body: some View {
         VStack {
@@ -33,10 +35,26 @@ struct NewNoteView: View {
                     
                     Button("Post") {
                         // For now, just print the note text
+                        // TODO: upload to firebase
                         print("Posted note: \(noteText)")
                         noteText = ""
                         showNewNoteView = false
                         showMapView = true
+                        let note = Note(
+                            id: UUID().uuidString,
+                            // TODO: change this
+                            userID: UUID().uuidString,
+                            noteText: noteText,
+                            voteCount: 0,
+                            comments: [],
+                            // TODO: change this
+                            latitude: 44.4728,
+                            longitude: 73.1515,
+                        )
+                        
+                        Task{
+                            await firestoreService.createNote(note: note)
+                        }
                     }
                     .foregroundColor(.blue)
                 }

@@ -15,6 +15,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     @ObservationIgnored let manager = CLLocationManager()
     var userLocation: CLLocation?
     var isAuthorized = false
+
     
     override init(){
         super.init()
@@ -33,6 +34,11 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         userLocation = locations.last
+        if let userLocation = locations.last{
+            let latitude = userLocation.coordinate.latitude
+            let longitude = userLocation.coordinate.longitude
+        }
+        
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
