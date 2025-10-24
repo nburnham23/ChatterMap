@@ -9,8 +9,11 @@ import Foundation
 
 struct Note: Identifiable, Codable {
     var id: String
+    var userID: String
     var noteText: String
     var voteCount: Int
     var comments: [String]
+    var latitude: Double
+    var longitude: Double
 }
 
