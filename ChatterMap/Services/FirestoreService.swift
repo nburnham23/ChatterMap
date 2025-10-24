@@ -47,6 +47,8 @@ class FirestoreService {
                 "noteText": note.noteText,
                 "voteCount": note.voteCount,
                 "comments": note.comments,
+                "latitude": note.latitude,
+                "longitude": note.longitude
             ])
             print("Document successfully written!")
         } catch {
@@ -67,5 +69,25 @@ class FirestoreService {
             print("Error getting document: \(error)")
         }
     }
+    func updateVoteCount(note: Note) async {
+        do {
+            try await db.collection("Notes").document(note.id).updateData([
+                "voteCount": note.voteCount,
+            ])
+            print("vote count successfully updated")
+        } catch {
+            print("Error updating vote count: \(error)")
+        }
+    }
     
+    func addComment(note: Note) async {
+        do {
+            try await db.collection("Notes").document(note.id).updateData([
+                "comments": note.comments,
+            ])
+            print("comments successfully written!")
+        } catch {
+            print("Error updating comments: \(error)")
+        }
+    }
 }
