@@ -19,11 +19,9 @@ struct NewNoteView: View {
         VStack {
             Spacer()
             
-            // This VStack sits above the keyboard
             VStack(spacing: 8) {
                 HStack {
                     Button("Close") {
-                        // Return to map view
                         showNewNoteView = false
                         showMapView = true
                     }
@@ -32,7 +30,7 @@ struct NewNoteView: View {
                     Spacer()
                     
                     Button("Post") {
-                        // For now, just print the note text
+                        // ADD LOGIC FOR NEW NOTE CREATION
                         print("Posted note: \(noteText)")
                         noteText = ""
                         showNewNoteView = false
