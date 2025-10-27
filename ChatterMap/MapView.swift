@@ -27,8 +27,8 @@ struct MapView: View {
                     showProfileView = false
                 }
                 .frame(width: 100, height: 100)
-                .foregroundColor(.white)
-                .background(Color.blue)
+                .foregroundColor(.black)
+                .background(Color.white)
                 .clipShape(Circle())
 
                 Spacer()
@@ -39,8 +39,8 @@ struct MapView: View {
                     showProfileView = false
                 }
                 .frame(width: 100, height: 100)
-                .foregroundColor(.white)
-                .background(Color.blue)
+                .foregroundColor(.black)
+                .background(Color.white)
                 .clipShape(Circle())
 
                 Spacer()
@@ -51,8 +51,8 @@ struct MapView: View {
                     showProfileView = true
                 }
                 .frame(width: 100, height: 100)
-                .foregroundColor(.white)
-                .background(Color.blue)
+                .foregroundColor(.black)
+                .background(Color.white)
                 .clipShape(Circle())
 
                 Spacer()

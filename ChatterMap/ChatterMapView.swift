@@ -38,7 +38,10 @@ struct ChatterMapView: View {
                         showNewNoteView: $showNewNoteView,
                         showProfileView: $showProfileView)
             } else if showRoutesView {
-                RoutesView()
+                RoutesView(showMapView: $showMapView,
+                            showRoutesView: $showRoutesView,
+                            showNewNoteView: $showNewNoteView,
+                            showProfileView: $showProfileView)
             } else if showNewNoteView {
                 NewNoteView(showMapView: $showMapView,
                             showRoutesView: $showRoutesView,

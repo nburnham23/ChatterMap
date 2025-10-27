@@ -21,11 +21,9 @@ struct NewNoteView: View {
         VStack {
             Spacer()
             
-            // This VStack sits above the keyboard
             VStack(spacing: 8) {
                 HStack {
                     Button("Close") {
-                        // Return to map view
                         showNewNoteView = false
                         showMapView = true
                     }
