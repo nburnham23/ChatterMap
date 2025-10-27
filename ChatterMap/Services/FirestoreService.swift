@@ -4,12 +4,13 @@
 //  ALL Database Getters/Setters
 //  Created by user285571 on 10/22/25.
 //
-
+import FirebaseCore
 import FirebaseFirestore
 
+
+
 class FirestoreService {
-    private let db = Firestore.firestore()
-    
+    let db = Firestore.firestore()
     // Create User
     func createUser(user: User) async {
         do {

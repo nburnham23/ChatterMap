@@ -37,9 +37,6 @@ struct NewNoteView: View {
                         // For now, just print the note text
                         // TODO: upload to firebase
                         print("Posted note: \(noteText)")
-                        noteText = ""
-                        showNewNoteView = false
-                        showMapView = true
                         let note = Note(
                             id: UUID().uuidString,
                             // TODO: change this
@@ -55,6 +52,8 @@ struct NewNoteView: View {
                         Task{
                             await firestoreService.createNote(note: note)
                         }
+                        showNewNoteView = false
+                        showMapView = true
                     }
                     .foregroundColor(.blue)
                 }

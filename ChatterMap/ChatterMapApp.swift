@@ -6,10 +6,15 @@
 //
 
 import SwiftUI
+import FirebaseCore
+import FirebaseFirestore
 
 @main
 struct ChatterMapApp: App {
     @State private var locationManager = LocationManager()
+    init(){
+        FirebaseApp.configure()
+    }
     var body: some Scene {
         WindowGroup {
             if locationManager.isAuthorized{
