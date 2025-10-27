@@ -26,7 +26,6 @@ struct ChatterMapView: View {
             Map(position: $cameraPosition) {
                 UserAnnotation()
             }
-                .ignoresSafeArea()
                 .onAppear{
                     updateCameraPosition()
                 }
