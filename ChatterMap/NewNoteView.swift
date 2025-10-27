@@ -13,7 +13,8 @@ struct NewNoteView: View {
     @Binding var showRoutesView: Bool
     @Binding var showNewNoteView: Bool
     @Binding var showProfileView: Bool
-    
+
+    @Enviorment(LocationManager.self) var locationManager
     @State private var noteText = ""
     let firestoreService = FirestoreService()
     
@@ -32,6 +33,9 @@ struct NewNoteView: View {
                     Spacer()
                     
                     Button("Post") {
+                        //Records coordinates of user when posting note
+                        let latitude = locationManager.userLocation?.coordinate.latitude ?? 0.0
+                        let longitude = locationManager.userLocation?.coordinate.longitude ?? 0.0
                         // For now, just print the note text
                         // TODO: upload to firebase
                         print("Posted note: \(noteText)")
@@ -42,9 +46,8 @@ struct NewNoteView: View {
                             noteText: noteText,
                             voteCount: 0,
                             comments: [],
-                            // TODO: change this
-                            latitude: 44.4728,
-                            longitude: 73.1515,
+                            latitude: latitude,
+                            longitude: longitude,
                         )
                         
                         Task{
