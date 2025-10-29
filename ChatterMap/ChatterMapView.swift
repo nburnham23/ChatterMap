@@ -16,6 +16,8 @@ struct ChatterMapView: View {
     @State private var showNewNoteView = false
     @State private var showProfileView = false
     
+    @StateObject private var notesVM = NotesViewModel()
+    
     @Environment(LocationManager.self) var locationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     
@@ -24,7 +26,17 @@ struct ChatterMapView: View {
         ZStack {
             Spacer()
             Map(position: $cameraPosition) {
+                ForEach(notesVM.notes) { note in
+                                Annotation("", coordinate: CLLocationCoordinate2D(latitude: note.latitude, longitude: note.longitude)) {
+                                    Circle()
+                                        .fill(Color.red)
+                                        .frame(width: 8, height: 8)
+                                }
+                            }
+                
                 UserAnnotation()
+            }   .task {
+                await notesVM.loadNotes()
             }
                 .onAppear{
                     updateCameraPosition()

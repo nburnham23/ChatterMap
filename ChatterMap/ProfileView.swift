@@ -87,7 +87,6 @@ struct ProfileView: View {
                     }) {
                         Text("Your Notes")
                             .fontWeight(.medium)
-                            .frame(width: 100, height 40)
                             .foregroundColor(selectedButton == "Your Notes" ? .blue.opacity(0.6) : .blue)
                     }
                     
@@ -96,7 +95,6 @@ struct ProfileView: View {
                     }) {
                         Text("Saved Notes")
                             .fontWeight(.medium)
-                            .frame(width: 100, height 40)
                             .foregroundColor(selectedButton == "Saved Notes" ? .blue.opacity(0.6) : .blue)
                     }
                 }
