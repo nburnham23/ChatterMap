@@ -7,8 +7,6 @@
 import FirebaseCore
 import FirebaseFirestore
 
-
-
 class FirestoreService {
     let db = Firestore.firestore()
     // Create User
@@ -56,20 +54,30 @@ class FirestoreService {
             print("Error writing document: \(error)")
         }
     }
-    func getNote(note: Note) async {
-        let docRef = db.collection("Notes").document(note.id)
+    
+    func getNote(note: Note) async -> Note? {
         do {
-            let document = try await docRef.getDocument()
-            if document.exists {
-                let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
-                print("Document data: \(dataDescription)")
-            } else {
-                print("Document does not exist")
-            }
+            let document = try await db.collection("Notes").document(note.id).getDocument()
+            return try document.data(as: Note.self)
         } catch {
-            print("Error getting document: \(error)")
+            print("Error fetching note: \(error)")
+            return nil
         }
     }
+    
+    func getAllNotes() async -> [Note] {
+        do {
+            let snapshot = try await db.collection("Notes").getDocuments()
+            let notes = snapshot.documents.compactMap { document in
+                try? document.data(as: Note.self)
+            }
+            return notes
+        } catch {
+            print("Error fetching notes: \(error)")
+            return []
+        }
+    }
+    
     func updateVoteCount(note: Note) async {
         do {
             try await db.collection("Notes").document(note.id).updateData([
