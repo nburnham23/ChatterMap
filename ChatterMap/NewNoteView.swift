@@ -14,7 +14,7 @@ struct NewNoteView: View {
     @Binding var showNewNoteView: Bool
     @Binding var showProfileView: Bool
 
-    @Enviorment(LocationManager.self) var locationManager
+    @Environment(LocationManager.self) var locationManager
     @State private var noteText = ""
     let firestoreService = FirestoreService()
     

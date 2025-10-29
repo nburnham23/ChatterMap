@@ -87,12 +87,9 @@ struct ProfileView: View {
                         selectedButton = "Your Notes"
                     }) {
                         Text("Your Notes")
-<<<<<<< HEAD
                             .fontWeight(.medium)
-=======
                             .font(.headline)
                             .frame(width: 140, height: 40)
->>>>>>> main
                             .foregroundColor(selectedButton == "Your Notes" ? .blue.opacity(0.6) : .blue)
                     }
 
@@ -100,12 +97,9 @@ struct ProfileView: View {
                         selectedButton = "Saved Notes"
                     }) {
                         Text("Saved Notes")
-<<<<<<< HEAD
                             .fontWeight(.medium)
-=======
                             .font(.headline)
                             .frame(width: 140, height: 40)
->>>>>>> main
                             .foregroundColor(selectedButton == "Saved Notes" ? .blue.opacity(0.6) : .blue)
                     }
                 }

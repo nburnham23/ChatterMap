@@ -60,7 +60,8 @@ struct ChatterMapView: View {
                             showNewNoteView: $showNewNoteView,
                             showProfileView: $showProfileView)
             } else if showProfileView {
-                ProfileView()
+                ProfileView(showProfileView: $showProfileView,
+                            showMapView: $showMapView)
             }
         }
     }
