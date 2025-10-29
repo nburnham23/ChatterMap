@@ -14,7 +14,7 @@ struct NewNoteView: View {
     @Binding var showNewNoteView: Bool
     @Binding var showProfileView: Bool
 
-    @Enviorment(LocationManager.self) var locationManager
+    @Environment(LocationManager.self) var locationManager
     @State private var noteText = ""
     let firestoreService = FirestoreService()
     
@@ -39,6 +39,7 @@ struct NewNoteView: View {
                         // For now, just print the note text
                         // TODO: upload to firebase
                         print("Posted note: \(noteText)")
+                        print("(\(latitude), \(longitude)")
                         let note = Note(
                             id: UUID().uuidString,
                             // TODO: change this
