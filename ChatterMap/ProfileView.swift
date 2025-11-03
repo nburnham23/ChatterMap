@@ -29,7 +29,7 @@ struct ProfileView: View {
                         showMapView = true
                     }
                     .font(.headline)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.red)
                     Spacer()
                 }
                 .padding(.horizontal)
