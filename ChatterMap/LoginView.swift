@@ -33,7 +33,7 @@ struct LoginView: View {
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
             
-            TextField("Password", text: $password)
+            SecureField("Password", text: $password)
                 .autocapitalization(.none)
 
 
