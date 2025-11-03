@@ -23,6 +23,8 @@ struct LoginView: View {
     @State private var isSignedUp = false
     @State private var errorMessage: String?
     
+    let firestoreService = FirestoreService()
+    
     var body: some View {
         Text("CHATTERMAP")
         Text(isSignedUp ? "Log In" : "Sign Up")
@@ -96,6 +98,9 @@ struct LoginView: View {
             username: email,
             notes: []
         )
+        Task{
+            await firestoreService.createUser(user: user)
+        }
     }
 }
 
