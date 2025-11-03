@@ -15,6 +15,7 @@ struct ChatterMapView: View {
     @State private var showRoutesView = false
     @State private var showNewNoteView = false
     @State private var showProfileView = false
+    @State private var showViewNoteView = false
     
     @StateObject private var notesVM = NotesViewModel()
     
@@ -27,12 +28,22 @@ struct ChatterMapView: View {
             Spacer()
             Map(position: $cameraPosition) {
                 ForEach(notesVM.notes) { note in
-                                Annotation("", coordinate: CLLocationCoordinate2D(latitude: note.latitude, longitude: note.longitude)) {
-                                    Circle()
-                                        .fill(Color.red)
-                                        .frame(width: 8, height: 8)
-                                }
-                            }
+                    Annotation("", coordinate: CLLocationCoordinate2D(latitude: note.latitude, longitude: note.longitude)) {
+
+                        Button {
+                            //notesVM.selectedNote = note
+                            showMapView = false
+                            showRoutesView = false
+                            showNewNoteView = false
+                            showProfileView = false
+                            showViewNoteView = true
+                        } label: {
+                            Circle()
+                                .fill(Color.red)
+                                .frame(width: 16, height: 16)
+                        }
+                    }
+                }
                 
                 UserAnnotation()
             }   .task {
@@ -62,6 +73,12 @@ struct ChatterMapView: View {
             } else if showProfileView {
                 ProfileView(showProfileView: $showProfileView,
                             showMapView: $showMapView)
+            }  else if showViewNoteView {
+                ViewNoteView(showMapView: $showMapView,
+                             showRoutesView: $showRoutesView,
+                             showNewNoteView: $showNewNoteView,
+                             showProfileView: $showProfileView,
+                             showViewNoteView: $showViewNoteView)
             }
         }
     }
