@@ -9,10 +9,16 @@
 // and a button to login
 // then it will query firebase for auth
 
+/*
+ TODO: BLOCK OUT PASSWORD
+ clear error messages?
+ */
+
 import SwiftUI
+import FirebaseAuth
 
 struct LoginView: View {
-    @State private var username = ""
+    @State private var email = ""
     @State private var password = ""
     @State private var isSignedUp = false
     @State private var errorMessage: String?
@@ -21,7 +27,7 @@ struct LoginView: View {
         Text("CHATTERMAP")
         Text(isSignedUp ? "Log In" : "Sign Up")
         VStack(spacing: 20){
-            TextField("Email", text: $username)
+            TextField("Email", text: $email)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
             
@@ -39,8 +45,11 @@ struct LoginView: View {
             Button(action: loginUser) { 
                 Text("Log In")
             }
+            Button(action: createUser){
+                Text("Sign up")
+            }
 
-            if isLoggedIn {
+            if isSignedUp {
                 Text("✅ Successfully logged in!")
                     .foregroundColor(.green)
                     .padding()
@@ -58,21 +67,36 @@ struct LoginView: View {
         }
 
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            isLoading = false
             if let error = error {
                 errorMessage = error.localizedDescription
             } else {
-                isLoggedIn = true
+                isSignedUp = true
                 print("User logged in: \(result?.user.uid ?? "Unknown UID")")
             }
         }
-
-        
+        // TODO: create a user object which will be environment object
     }
-    
-
-
-    
+    func createUser(){
+        guard !email.isEmpty, !password.isEmpty else {
+            errorMessage = "Please fill in all fields."
+            return
+        }
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let error = error {
+                errorMessage = error.localizedDescription
+            } else {
+                isSignedUp = true
+                print("User signed up: \(result?.user.uid ?? "Unknown UID")")
+            }
+        }
+        // TODO: create a user object which will be environment object
+        // TODO: users have usernames
+        let user = User(
+            id: UUID().uuidString,
+            username: email,
+            notes: []
+        )
+    }
 }
 
 #Preview {
