@@ -36,7 +36,7 @@ struct LoginView: View {
                     .padding(.horizontal)
             }
             
-            Button(action: loginUser) { 
+            Button(action: loginUser) {
                 Text("Log In")
             }
 

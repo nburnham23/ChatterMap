@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct ViewNoteView: View {
+    let note: Note
+    
     @Binding var showMapView: Bool
     @Binding var showRoutesView: Bool
     @Binding var showNewNoteView: Bool
@@ -36,6 +38,11 @@ struct ViewNoteView: View {
                     .padding(.top)
                     
                     Text("Note contents")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .padding(.bottom, 10)
+                    
+                    Text(note.noteText)
                         .font(.title2)
                         .fontWeight(.semibold)
                         .padding(.bottom, 10)

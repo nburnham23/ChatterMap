@@ -31,7 +31,7 @@ struct ChatterMapView: View {
                     Annotation("", coordinate: CLLocationCoordinate2D(latitude: note.latitude, longitude: note.longitude)) {
 
                         Button {
-                            //notesVM.selectedNote = note
+                            notesVM.selectedNote = note
                             showMapView = false
                             showRoutesView = false
                             showNewNoteView = false
@@ -74,7 +74,8 @@ struct ChatterMapView: View {
                 ProfileView(showProfileView: $showProfileView,
                             showMapView: $showMapView)
             }  else if showViewNoteView {
-                ViewNoteView(showMapView: $showMapView,
+                ViewNoteView(note: notesVM.selectedNote!,
+                             showMapView: $showMapView,
                              showRoutesView: $showRoutesView,
                              showNewNoteView: $showNewNoteView,
                              showProfileView: $showProfileView,
