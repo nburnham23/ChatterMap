@@ -27,7 +27,9 @@ struct LoginView: View {
     
     var body: some View {
         Text("CHATTERMAP")
+            .font(.title)
         Text(isSignedUp ? "Log In" : "Sign Up")
+            .font(.title2)
         VStack(spacing: 20){
             TextField("Email", text: $email)
                 .keyboardType(.emailAddress)

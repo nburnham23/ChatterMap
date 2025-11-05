@@ -24,5 +24,6 @@ struct ChatterMapApp: App {
             }
         }
         .environment(locationManager)
+        .environmentObject(User())
     }
 }
