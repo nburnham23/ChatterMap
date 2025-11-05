@@ -37,17 +37,18 @@ struct ViewNoteView: View {
                     .padding(.horizontal)
                     .padding(.top)
                     
-                    Text("Note contents")
+                    Text("Note written by \(note.userID)")
                         .font(.title2)
                         .fontWeight(.semibold)
                         .padding(.bottom, 10)
                     
                     Text(note.noteText)
                         .font(.title2)
-                        .fontWeight(.semibold)
                         .padding(.bottom, 10)
                     
-                    // INSERT ROUTES CODE HERE
+                    Text("Upvote count: \(note.voteCount)")
+                        .font(.title2)
+                        .padding(.bottom, 10)
                     
                     Spacer()
                 }
