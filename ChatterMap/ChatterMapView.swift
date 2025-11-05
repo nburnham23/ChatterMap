@@ -5,8 +5,6 @@
 //  Created by jared on 10/8/25.
 //
 
-// a comment
-
 import SwiftUI
 import MapKit
 
@@ -22,14 +20,15 @@ struct ChatterMapView: View {
     @Environment(LocationManager.self) var locationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     
-    
-    var body : some View {
+    var body: some View {
         ZStack {
             Spacer()
+            
+            // Main map
             Map(position: $cameraPosition) {
+                // Show note pins
                 ForEach(notesVM.notes) { note in
                     Annotation("", coordinate: CLLocationCoordinate2D(latitude: note.latitude, longitude: note.longitude)) {
-
                         Button {
                             notesVM.selectedNote = note
                             showMapView = false
@@ -38,23 +37,31 @@ struct ChatterMapView: View {
                             showProfileView = false
                             showViewNoteView = true
                         } label: {
-                            Circle()
+                            MapPinShape()
                                 .fill(Color.red)
-                                .frame(width: 16, height: 16)
+                                .overlay(
+                                    MapPinShape().stroke(Color.black, lineWidth: 2)
+                                )
+                                .frame(width: 20, height: 35)
+                                .shadow(radius: 2)
                         }
                     }
                 }
                 
+                // User location
                 UserAnnotation()
-            }   .task {
+            }
+            .task {
                 await notesVM.loadNotes()
             }
-                .onAppear{
-                    updateCameraPosition()
-                }
-                .mapControls{
-                    MapUserLocationButton()
-                }
+            .onAppear {
+                updateCameraPosition()
+            }
+            .mapControls {
+                MapUserLocationButton()
+            }
+            
+            // View switching logic
             if showMapView {
                 MapView(showMapView: $showMapView,
                         showRoutesView: $showRoutesView,
@@ -62,9 +69,9 @@ struct ChatterMapView: View {
                         showProfileView: $showProfileView)
             } else if showRoutesView {
                 RoutesView(showMapView: $showMapView,
-                            showRoutesView: $showRoutesView,
-                            showNewNoteView: $showNewNoteView,
-                            showProfileView: $showProfileView)
+                           showRoutesView: $showRoutesView,
+                           showNewNoteView: $showNewNoteView,
+                           showProfileView: $showProfileView)
             } else if showNewNoteView {
                 NewNoteView(showMapView: $showMapView,
                             showRoutesView: $showRoutesView,
@@ -73,8 +80,8 @@ struct ChatterMapView: View {
             } else if showProfileView {
                 ProfileView(showProfileView: $showProfileView,
                             showMapView: $showMapView)
-            }  else if showViewNoteView {
-                ViewNoteView(note: notesVM.selectedNote!,
+            } else if showViewNoteView, let selectedNote = notesVM.selectedNote {
+                ViewNoteView(note: selectedNote,
                              showMapView: $showMapView,
                              showRoutesView: $showRoutesView,
                              showNewNoteView: $showNewNoteView,
@@ -83,19 +90,43 @@ struct ChatterMapView: View {
             }
         }
     }
-    func updateCameraPosition(){
-        if let userLocation = locationManager.userLocation{
+    
+    func updateCameraPosition() {
+        if let userLocation = locationManager.userLocation {
             let userRegion = MKCoordinateRegion(
                 center: userLocation.coordinate,
-                span: MKCoordinateSpan(
-                    latitudeDelta: 0.15,
-                    longitudeDelta: 0.15
-                )
+                span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
             )
-            withAnimation{
+            withAnimation {
                 cameraPosition = .region(userRegion)
             }
         }
+    }
+}
+
+// MARK: - Custom Pin Shape
+struct MapPinShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        let curveHeight = rect.height * 0.3
+        let topY = rect.minY + curveHeight
+        
+        // Start left of the curved top
+        path.move(to: CGPoint(x: rect.minX, y: topY))
+        
+        // Curved top
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: topY),
+            control: CGPoint(x: rect.midX, y: rect.minY)
+        )
+        
+        // Pointed bottom
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: topY))
+        
+        path.closeSubpath()
+        return path
     }
 }
 
