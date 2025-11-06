@@ -7,12 +7,10 @@
 
 import Foundation
 
-struct Note: Identifiable, Codable {
+struct Comment: Identifiable, Codable {
     var id: String
+    var parentNoteID: String
     var userID: String
-    var noteText: String
+    var commentText: String
     var voteCount: Int
-    var latitude: Double
-    var longitude: Double
 }
-
