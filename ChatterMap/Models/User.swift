@@ -11,8 +11,6 @@ class User: Identifiable, Codable, ObservableObject {
     var id: String
     var username: String
     var notes: [String]
-<<<<<<< HEAD
-=======
     var savedNotes: [Note]
     
     init(id: String = "", username: String = "", notes: [String] = [], savedNotes: [Note] = []) {
@@ -34,5 +32,4 @@ class User: Identifiable, Codable, ObservableObject {
         self.id = id
         self.username = username
     }
->>>>>>> main
 }
