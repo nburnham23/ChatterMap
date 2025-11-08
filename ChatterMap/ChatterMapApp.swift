@@ -12,18 +12,26 @@ import FirebaseFirestore
 @main
 struct ChatterMapApp: App {
     @State private var locationManager = LocationManager()
+    @StateObject private var user = User()
+    @State private var isAuthenticated = false
+    
     init(){
         FirebaseApp.configure()
     }
     var body: some Scene {
         WindowGroup {
-            if locationManager.isAuthorized{
+            if !isAuthenticated {
+                LoginView(isAuthenticated: $isAuthenticated)
+                    .environmentObject(user)
+            } else if locationManager.isAuthorized {
                 ChatterMapView()
-            }else{
+                    .environment(locationManager)
+                    .environmentObject(user)
+            } else {
                 LocationDeniedView()
+                    .environment(locationManager)
+                    .environmentObject(user)
             }
         }
-        .environment(locationManager)
-        .environmentObject(User())
     }
 }

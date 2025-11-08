@@ -11,22 +11,25 @@ class User: Identifiable, Codable, ObservableObject {
     var id: String
     var username: String
     var notes: [String]
-<<<<<<< HEAD
-=======
     var savedNotes: [Note]
     
-    init(){
-        self.id = ""
-        self.username = ""
-        self.notes = []
-        self.savedNotes = []
+    init(id: String = "", username: String = "", notes: [String] = [], savedNotes: [Note] = []) {
+        self.id = id
+        self.username = username
+        self.notes = notes
+        self.savedNotes = savedNotes
     }
     
-    func setId(_ id: String){
+    func setId(_ id: String) {
         self.id = id
     }
-    func setUsername(_ username: String){
+    
+    func setUsername(_ username: String) {
         self.username = username
     }
->>>>>>> main
+    
+    func updateUser(id: String, username: String) {
+        self.id = id
+        self.username = username
+    }
 }
