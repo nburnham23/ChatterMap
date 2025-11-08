@@ -76,8 +76,8 @@ struct LoginView: View {
                 Task {
                     await loadUserData(uid: authUser.uid)
                     isAuthenticated = true
-                    print(user)
                 }
+                print(user.username)
             }
         }
     }
