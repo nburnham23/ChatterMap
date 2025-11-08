@@ -46,7 +46,6 @@ struct NewNoteView: View {
                             userID: UUID().uuidString,
                             noteText: noteText,
                             voteCount: 0,
-                            comments: [],
                             latitude: latitude,
                             longitude: longitude,
                         )

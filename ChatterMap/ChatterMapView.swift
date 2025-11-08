@@ -40,7 +40,7 @@ struct ChatterMapView: View {
                             MapPinShape()
                                 .fill(Color.red)
                                 .overlay(
-                                    MapPinShape().stroke(Color.black, lineWidth: 2)
+                                    MapPinShape().stroke(Color.white, lineWidth: 2)
                                 )
                                 .frame(width: 20, height: 35)
                                 .shadow(radius: 2)

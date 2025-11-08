@@ -70,7 +70,6 @@ class FirestoreService {
                 "userID": note.userID,
                 "noteText": note.noteText,
                 "voteCount": note.voteCount,
-                "comments": note.comments,
                 "latitude": note.latitude,
                 "longitude": note.longitude
             ])
@@ -114,14 +113,18 @@ class FirestoreService {
         }
     }
     
-    func addComment(note: Note) async {
+    func createComment(comment: Comment) async {
         do {
-            try await db.collection("Notes").document(note.id).updateData([
-                "comments": note.comments,
+            try await db.collection("Comments").document(comment.id).setData([
+                "id": comment.id,
+                "userID": comment.userID,
+                "parentNoteID": comment.parentNoteID,
+                "commentText": comment.commentText,
+                "voteCount": comment.voteCount,
             ])
-            print("comments successfully written!")
+            print("Document successfully written!")
         } catch {
-            print("Error updating comments: \(error)")
+            print("Error writing document: \(error)")
         }
     }
 }
