@@ -8,6 +8,7 @@
 import Foundation
 
 struct Note: Identifiable, Codable {
+    // TODO: add dates
     var id: String
     var userID: String
     var noteText: String

@@ -37,6 +37,31 @@ class FirestoreService {
             print("Error getting document: \(error)")
         }
     }
+    func getUser(withId id: String) async -> User? {
+        let docRef = db.collection("Users").document(id)
+        do {
+                let document = try await docRef.getDocument()
+                if let user = try? document.data(as: User.self) {
+                    return user
+                } else {
+                    print("Failed to decode user data")
+                    return nil
+                }
+            } catch {
+                print("Error fetching user: \(error)")
+                return nil
+            }
+    }
+    func getUserById(uid: String) async -> User? {
+        do {
+            let document = try await db.collection("Users").document(uid).getDocument()
+            return try document.data(as: User.self)
+        } catch {
+            print("Error fetching user: \(error)")
+            return nil
+        }
+    }
+    
     // Create Note
     func createNote(note: Note) async {
         do {
