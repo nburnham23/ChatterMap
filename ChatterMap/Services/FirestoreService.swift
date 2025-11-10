@@ -127,4 +127,20 @@ class FirestoreService {
             print("Error writing document: \(error)")
         }
     }
+    
+    func getComments(parentNoteID: String) async -> [Comment] {
+        do {
+            let snapshot = try await db.collection("Comments")
+                .whereField("parentNoteID", isEqualTo: parentNoteID)
+                .getDocuments()
+
+            return snapshot.documents.compactMap { doc in
+                try? doc.data(as: Comment.self)
+            }
+        } catch {
+            print("Error getting comments: \(error)")
+            return []
+        }
+    }
 }
+
