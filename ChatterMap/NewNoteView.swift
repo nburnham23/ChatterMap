@@ -15,6 +15,7 @@ struct NewNoteView: View {
     @Binding var showProfileView: Bool
 
     @Environment(LocationManager.self) var locationManager
+    @EnvironmentObject var user: User
     @State private var noteText = ""
     let firestoreService = FirestoreService()
     
@@ -38,10 +39,11 @@ struct NewNoteView: View {
                         let longitude = locationManager.userLocation?.coordinate.longitude ?? 0.0
                         print("Posted note: \(noteText)")
                         print("(\(latitude), \(longitude)")
+                        
                         let note = Note(
                             id: UUID().uuidString,
                             // TODO: change this
-                            userID: UUID().uuidString,
+                            userID: user.id,
                             noteText: noteText,
                             voteCount: 0,
                             latitude: latitude,
@@ -80,5 +82,5 @@ struct NewNoteView: View {
         showRoutesView: .constant(false),
         showNewNoteView: .constant(true),
         showProfileView: .constant(false)
-    )
+    ).environmentObject(User())
 }

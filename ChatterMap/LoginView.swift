@@ -75,6 +75,7 @@ struct LoginView: View {
             } else if let authUser = result?.user{
                 Task {
                     await loadUserData(uid: authUser.uid)
+                    user.updateUser(id: authUser.uid, username: email)
                     isAuthenticated = true
                 }
                 print(user.username)
