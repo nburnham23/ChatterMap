@@ -86,7 +86,6 @@ struct LoginView: View {
             errorMessage = "Please fill in all fields."
             return
         }
-        
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
                 errorMessage = error.localizedDescription
@@ -98,7 +97,6 @@ struct LoginView: View {
                     notes: [],
                     savedNotes: []
                 )
-                
                 Task {
                     await firestoreService.createUser(user: newUser)
                     // Update environment object

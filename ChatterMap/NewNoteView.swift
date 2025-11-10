@@ -36,8 +36,6 @@ struct NewNoteView: View {
                         //Records coordinates of user when posting note
                         let latitude = locationManager.userLocation?.coordinate.latitude ?? 0.0
                         let longitude = locationManager.userLocation?.coordinate.longitude ?? 0.0
-                        // For now, just print the note text
-                        // TODO: upload to firebase
                         print("Posted note: \(noteText)")
                         print("(\(latitude), \(longitude)")
                         let note = Note(

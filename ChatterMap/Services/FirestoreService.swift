@@ -23,6 +23,7 @@ class FirestoreService {
         }
     }
     // Get User
+    /*
     func getUser(user: User) async {
         let docRef = db.collection("Users").document(user.id)
         do {
@@ -36,7 +37,7 @@ class FirestoreService {
         } catch {
             print("Error getting document: \(error)")
         }
-    }
+    }*/
     func getUser(withId id: String) async -> User? {
         let docRef = db.collection("Users").document(id)
         do {
