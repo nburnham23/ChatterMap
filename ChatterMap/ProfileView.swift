@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     // Placeholder data — easily replaced later with database values
-    @State private var userName: String = "Example Name"
+    @State private var username: String = "Example Name"
     @State private var userEmail: String = "example@email.com"
     @State private var totalNotes: Int = 12
 
@@ -17,6 +17,8 @@ struct ProfileView: View {
 
     @Binding var showProfileView: Bool
     @Binding var showMapView: Bool
+
+    @EnvironmentObject var user: User
 
     var body: some View {
         NavigationStack {
@@ -37,7 +39,7 @@ struct ProfileView: View {
 
                 // MARK: - User Info
                 VStack(spacing: 8) {
-                    Text(userName)
+                    Text(username)
                         .font(.title)
                         .fontWeight(.bold)
 
@@ -48,6 +50,10 @@ struct ProfileView: View {
                     Text("Total Notes: \(totalNotes)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                }
+                .onAppear{
+                    username = user.username
+                    userEmail = user.username
                 }
                 .padding(.top, 20)
 
@@ -115,4 +121,5 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView(showProfileView: .constant(true), showMapView: .constant(false))
+        .environmentObject(User())
 }
