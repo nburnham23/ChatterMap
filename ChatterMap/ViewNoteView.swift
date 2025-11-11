@@ -8,23 +8,6 @@
 
 import SwiftUI
 
-struct CommentCell: View {
-    let comment: Comment
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(comment.userID)
-                .font(.caption)
-                .foregroundStyle(.gray)
-            Text(comment.commentText)
-                .font(.body)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-    }
-}
-
 struct ViewNoteView: View {
     let note: Note
     
@@ -40,23 +23,6 @@ struct ViewNoteView: View {
     @State private var comments: [Comment] = []
     
     let firestoreService = FirestoreService()
-    
-    struct CommentCell: View {
-        let comment: Comment
-        var body: some View {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(comment.userID)  // later you’ll replace userID with actual username
-                    .font(.caption)
-                    .foregroundStyle(.gray)
-                Text(comment.commentText)
-                    .font(.body)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.systemGray6))
-            .cornerRadius(12)
-        }
-    }
     
     var body: some View {
         ZStack {
@@ -163,12 +129,11 @@ struct ViewNoteView: View {
                 .padding(.bottom, 20)
                 .padding(.top, 60)
             }
-            // end VStack
         }
         .ignoresSafeArea(.container)
         .onAppear {
             Task {
-                comments = await firestoreService.getComments(parentNoteID: note.id)
+                comments = await firestoreService.getCommentsByNote(parentNoteID: note.id)
             }
         }
         .animation(.easeInOut, value: showRoutesView)

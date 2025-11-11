@@ -7,11 +7,31 @@
 
 import SwiftUI
 
+struct Cell: View {
+    let comment: Comment
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(comment.userID)
+                .font(.caption)
+                .foregroundStyle(.gray)
+            Text(comment.commentText)
+                .font(.body)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+}
+
 struct ProfileView: View {
     // Placeholder data — easily replaced later with database values
     @State private var username: String = "Example Name"
     @State private var userEmail: String = "example@email.com"
     @State private var totalNotes: Int = 12
+    
+    @State private var postedNotes: [Note] = []
+    @State private var savedNotes: [Note] = []
 
     @State private var selectedButton: String? = nil
 
@@ -19,6 +39,8 @@ struct ProfileView: View {
     @Binding var showMapView: Bool
 
     @EnvironmentObject var user: User
+    
+    let firestoreService = FirestoreService()
 
     var body: some View {
         NavigationStack {
@@ -110,11 +132,48 @@ struct ProfileView: View {
                     }
                 }
                 .padding(.top, -20)
-
+                if selectedButton == "Your Notes" {
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(postedNotes) { n in
+                                NoteCell(note: n)
+                            }
+                            if postedNotes.isEmpty {
+                                Text("No posts yet.")
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 250) // you can adjust this
+                    .padding(.horizontal)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(savedNotes) { n in
+                                NoteCell(note: n)
+                            }
+                            if savedNotes.isEmpty {
+                                Text("No saved posts yet.")
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 250) // you can adjust this
+                    .padding(.horizontal)
+                }
+                
                 Spacer()
             }
             .padding()
             .navigationBarBackButtonHidden(true)
+        }
+        .onAppear {
+            Task {
+                postedNotes = await firestoreService.getNotesByUser(parentUserID: user.id)
+                postedNotes = await firestoreService.getNotesByUser(parentUserID: user.id)
+            }
         }
     }
 }

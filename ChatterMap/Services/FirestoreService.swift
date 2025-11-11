@@ -90,6 +90,20 @@ class FirestoreService {
         }
     }
     
+    func getNotesByUser(parentUserID: String) async -> [Note] {
+        do {
+            let snapshot = try await db.collection("Notes")
+                .whereField("userID", isEqualTo: parentUserID)
+                .getDocuments()
+            return snapshot.documents.compactMap { doc in
+                try? doc.data(as: Note.self)
+            }
+        } catch {
+            print("Error fetching notes: \(error)")
+            return []
+        }
+    }
+    
     func getAllNotes() async -> [Note] {
         do {
             let snapshot = try await db.collection("Notes").getDocuments()
@@ -129,7 +143,7 @@ class FirestoreService {
         }
     }
     
-    func getComments(parentNoteID: String) async -> [Comment] {
+    func getCommentsByNote(parentNoteID: String) async -> [Comment] {
         do {
             let snapshot = try await db.collection("Comments")
                 .whereField("parentNoteID", isEqualTo: parentNoteID)
