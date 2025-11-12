@@ -21,6 +21,7 @@ struct ChatterMapView: View {
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     // don't let the user move the map
     let interactionModes: MapInteractionModes = []
+    
     var body: some View {
         ZStack {
             Spacer()
@@ -94,7 +95,7 @@ struct ChatterMapView: View {
         if let userLocation = locationManager.userLocation {
             let userRegion = MKCoordinateRegion(
                 center: userLocation.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
+                span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
             )
             withAnimation {
                 cameraPosition = .region(userRegion)
