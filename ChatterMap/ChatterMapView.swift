@@ -19,13 +19,15 @@ struct ChatterMapView: View {
     
     @Environment(LocationManager.self) var locationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
-    
+    // don't let the user move the map
+    let interactionModes: MapInteractionModes = []
     var body: some View {
         ZStack {
             Spacer()
             
             // Main map
-            Map(position: $cameraPosition) {
+            Map(position: $cameraPosition,
+                interactionModes: interactionModes) {
                 // Show note pins
                 ForEach(notesVM.notes) { note in
                     Annotation("", coordinate: CLLocationCoordinate2D(latitude: note.latitude, longitude: note.longitude)) {
@@ -56,9 +58,6 @@ struct ChatterMapView: View {
             }
             .onAppear {
                 updateCameraPosition()
-            }
-            .mapControls {
-                MapUserLocationButton()
             }
             
             // View switching logic
