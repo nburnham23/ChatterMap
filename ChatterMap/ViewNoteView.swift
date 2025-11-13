@@ -22,6 +22,8 @@ struct ViewNoteView: View {
     
     @State private var comments: [Comment] = []
     
+    @EnvironmentObject var user: User
+    
     let firestoreService = FirestoreService()
     
     var body: some View {
@@ -41,7 +43,13 @@ struct ViewNoteView: View {
                         Spacer()
                         
                         Button("\u{1F516}") {
-                            print("user saved note")
+                            Task {
+                                try? await firestoreService.saveNoteToUser(userID: user.id, noteID: note.id)
+                                if !user.savedNotes.contains(note.id) {
+                                    user.savedNotes.append(note.id)
+                                }
+                                print("Note saved successfully.")
+                            }
                         }
                         .foregroundColor(.red)
                     }

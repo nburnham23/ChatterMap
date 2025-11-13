@@ -13,7 +13,7 @@ import SwiftUI
 import FirebaseAuth
 
 struct LoginView: View {
-    @State private var email = ""
+    @State private var username = ""
     @State private var password = ""
     @State private var errorMessage: String?
     @Binding var isAuthenticated: Bool
@@ -30,8 +30,7 @@ struct LoginView: View {
             Text(isAuthenticated ? "Log In" : "Sign Up")
                 .font(.title2)
 
-            TextField("Email", text: $email)
-                .keyboardType(.emailAddress)
+            TextField("Username", text: $username)
                 .autocapitalization(.none)
             
             SecureField("Password", text: $password)
@@ -64,44 +63,50 @@ struct LoginView: View {
     
     func loginUser() {
         // Check if either text field is empty
-        guard !email.isEmpty, !password.isEmpty else {
+        guard !username.isEmpty, !password.isEmpty else {
             errorMessage = "Please fill in all fields."
             return
         }
+        
+        let usernameFormatted = "\(username)@chattermap.com"
 
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+        Auth.auth().signIn(withEmail: usernameFormatted, password: password) { result, error in
             if let error = error {
                 errorMessage = error.localizedDescription
             } else if let authUser = result?.user{
                 Task {
                     await loadUserData(uid: authUser.uid)
-                    user.updateUser(id: authUser.uid, username: email)
+                    user.updateUser(id: authUser.uid, username: username)
                     isAuthenticated = true
                 }
                 print(user.username)
             }
         }
     }
+
     func createUser() {
-        guard !email.isEmpty, !password.isEmpty else {
+        guard !username.isEmpty, !password.isEmpty else {
             errorMessage = "Please fill in all fields."
             return
         }
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+        
+        let usernameFormatted = "\(username)@chattermap.com"
+        
+        Auth.auth().createUser(withEmail: usernameFormatted, password: password) { result, error in
             if let error = error {
                 errorMessage = error.localizedDescription
             } else if let authUser = result?.user {
                 // Create new user in Firestore
                 let newUser = User(
                     id: authUser.uid,
-                    username: email,
-                    notes: [],
+                    username: username,
+                    postedNotes: [],
                     savedNotes: []
                 )
                 Task {
                     await firestoreService.createUser(user: newUser)
                     // Update environment object
-                    user.updateUser(id: authUser.uid, username: email)
+                    user.updateUser(id: authUser.uid, username: username)
                     isAuthenticated = true
                 }
             }
@@ -113,7 +118,7 @@ struct LoginView: View {
             // Update the environment object on main thread
             await MainActor.run {
                 user.updateUser(id: fetchedUser.id, username: fetchedUser.username)
-                user.notes = fetchedUser.notes
+                user.postedNotes = fetchedUser.postedNotes
                 user.savedNotes = fetchedUser.savedNotes
             }
         }

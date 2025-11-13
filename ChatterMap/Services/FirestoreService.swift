@@ -15,29 +15,22 @@ class FirestoreService {
             try await db.collection("Users").document(user.id).setData([
                 "id": user.id,
                 "username": user.username,
-                "notes": user.notes
+                "postedNotes": user.postedNotes,
+                "savedNotes": user.savedNotes
             ])
             print("Document successfully written!")
         } catch {
             print("Error writing document: \(error)")
         }
     }
-    // Get User
-    /*
-    func getUser(user: User) async {
-        let docRef = db.collection("Users").document(user.id)
-        do {
-            let document = try await docRef.getDocument()
-            if document.exists {
-                let dataDescription = document.data().map(String.init(describing:)) ?? "nil"
-                print("Document data: \(dataDescription)")
-            } else {
-                print("Document does not exist")
-            }
-        } catch {
-            print("Error getting document: \(error)")
-        }
-    }*/
+    
+    func saveNoteToUser(userID: String, noteID: String) async throws{
+        let userRef = db.collection("Users").document(userID)
+            try await userRef.updateData([
+                "savedNotes": FieldValue.arrayUnion([noteID])
+            ])
+    }
+    
     func getUser(withId id: String) async -> User? {
         let docRef = db.collection("Users").document(id)
         do {
@@ -80,9 +73,9 @@ class FirestoreService {
         }
     }
     
-    func getNote(note: Note) async -> Note? {
+    func getNote(id: String) async -> Note? {
         do {
-            let document = try await db.collection("Notes").document(note.id).getDocument()
+            let document = try await db.collection("Notes").document(id).getDocument()
             return try document.data(as: Note.self)
         } catch {
             print("Error fetching note: \(error)")
@@ -90,7 +83,7 @@ class FirestoreService {
         }
     }
     
-    func getNotesByUser(parentUserID: String) async -> [Note] {
+    func getPostedNotesByUser(parentUserID: String) async -> [Note] {
         do {
             let snapshot = try await db.collection("Notes")
                 .whereField("userID", isEqualTo: parentUserID)
@@ -102,6 +95,26 @@ class FirestoreService {
             print("Error fetching notes: \(error)")
             return []
         }
+    }
+    
+    func getSavedNotesByUser(parentUserID: String) async -> [Note] {
+        do {
+                let userDoc = try await db.collection("Users").document(parentUserID).getDocument()
+                
+                let userData = try userDoc.data(as: User.self)
+                
+                var savedNotes: [Note] = []
+                for noteID in userData.savedNotes {
+                    if let note = await getNote(id: noteID) {
+                        savedNotes.append(note)
+                    }
+                }
+                return savedNotes
+                
+            } catch {
+                print("Error fetching saved notes for user \(parentUserID): \(error)")
+                return []
+            }
     }
     
     func getAllNotes() async -> [Note] {

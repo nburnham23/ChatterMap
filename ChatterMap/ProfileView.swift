@@ -7,28 +7,13 @@
 
 import SwiftUI
 
-struct Cell: View {
-    let comment: Comment
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(comment.userID)
-                .font(.caption)
-                .foregroundStyle(.gray)
-            Text(comment.commentText)
-                .font(.body)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-    }
-}
-
 struct ProfileView: View {
     // Placeholder data — easily replaced later with database values
     @State private var username: String = "Example Name"
     @State private var userEmail: String = "example@email.com"
     @State private var totalNotes: Int = 12
+    
+    @EnvironmentObject var user: User
     
     @State private var postedNotes: [Note] = []
     @State private var savedNotes: [Note] = []
@@ -37,8 +22,6 @@ struct ProfileView: View {
 
     @Binding var showProfileView: Bool
     @Binding var showMapView: Bool
-
-    @EnvironmentObject var user: User
     
     let firestoreService = FirestoreService()
 
@@ -171,8 +154,8 @@ struct ProfileView: View {
         }
         .onAppear {
             Task {
-                postedNotes = await firestoreService.getNotesByUser(parentUserID: user.id)
-                postedNotes = await firestoreService.getNotesByUser(parentUserID: user.id)
+                postedNotes = await firestoreService.getPostedNotesByUser(parentUserID: user.id)
+                savedNotes = await firestoreService.getSavedNotesByUser(parentUserID: user.id)
             }
         }
     }

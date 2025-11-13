@@ -10,13 +10,13 @@ import Foundation
 class User: Identifiable, Codable, ObservableObject {
     var id: String
     var username: String
-    var notes: [String]
-    var savedNotes: [Note]
+    var postedNotes: [String]
+    var savedNotes: [String]
     
-    init(id: String = "", username: String = "", notes: [String] = [], savedNotes: [Note] = []) {
+    init(id: String = "", username: String = "", postedNotes: [String] = [], savedNotes: [String] = []) {
         self.id = id
         self.username = username
-        self.notes = notes
+        self.postedNotes = postedNotes
         self.savedNotes = savedNotes
     }
     
