@@ -9,6 +9,8 @@ import FirebaseFirestore
 
 class FirestoreService {
     let db = Firestore.firestore()
+    
+  // USER FUNCTIONS
     // Create User
     func createUser(user: User) async {
         do {
@@ -28,6 +30,13 @@ class FirestoreService {
         let userRef = db.collection("Users").document(userID)
             try await userRef.updateData([
                 "savedNotes": FieldValue.arrayUnion([noteID])
+            ])
+    }
+    
+    func unsaveNoteToUser(userID: String, noteID: String) async throws{
+        let userRef = db.collection("Users").document(userID)
+            try await userRef.updateData([
+                "savedNotes": FieldValue.arrayRemove([noteID])
             ])
     }
     
@@ -56,6 +65,13 @@ class FirestoreService {
         }
     }
     
+    
+    
+    
+    
+    
+    
+  // NOTE FUNCTIONS
     // Create Note
     func createNote(note: Note) async {
         do {
@@ -140,7 +156,14 @@ class FirestoreService {
             print("Error updating vote count: \(error)")
         }
     }
+
     
+    
+    
+    
+    
+    
+  // COMMENT FUNCTIONS
     func createComment(comment: Comment) async {
         do {
             try await db.collection("Comments").document(comment.id).setData([
@@ -167,6 +190,24 @@ class FirestoreService {
             }
         } catch {
             print("Error getting comments: \(error)")
+            return []
+        }
+    }
+    
+    
+    
+    
+    
+  // ROUTE FUNCTIONS
+    func getAllRoutes() async -> [Route] {
+        do {
+            let snapshot = try await db.collection("Routes").getDocuments()
+            let routes = snapshot.documents.compactMap { document in
+                try? document.data(as: Route.self)
+            }
+            return routes
+        } catch {
+            print("Error fetching routes: \(error)")
             return []
         }
     }

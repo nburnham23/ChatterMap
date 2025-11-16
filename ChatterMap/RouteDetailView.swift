@@ -1,23 +1,22 @@
 //
-//  RoutesView.swift
+//  RouteDetailView.swift
 //  ChatterMap
 //
-//  Created by jared on 10/15/25.
+//  Created by jared on 11/16/25.
 //
 
 import SwiftUI
 
-struct RoutesView: View {
+struct RouteDetailView: View {
     @Binding var showMapView: Bool
     @Binding var showRoutesView: Bool
     @Binding var showNewNoteView: Bool
     @Binding var showProfileView: Bool
-    @State private var showRouteDetailView = false
+    @Binding var showRouteDetailView: Bool
     
     @EnvironmentObject var user: User
     
     @State private var nearbyRoutes: [Route] = []
-    @State private var selectedRoute: Route? = nil
 
     let firestoreService = FirestoreService()
 
@@ -41,20 +40,15 @@ struct RoutesView: View {
                     .padding(.horizontal)
                     .padding(.top)
                     
-                    Text("Nearby Routes")
+                    Text("Route details")
                         .font(.title2)
                         .fontWeight(.semibold)
                         .padding(.bottom, 10)
-                    
+                    // make this scroll through notes in the route
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(nearbyRoutes) { r in
-                                Button {
-                                    selectedRoute = r
-                                    showRouteDetailView = true
-                                } label: {
-                                    RouteCell(route: r)
-                                }
+                                RouteCell(route: r)
                             }
                             if nearbyRoutes.isEmpty {
                                 Text("No routes yet.")
@@ -63,7 +57,7 @@ struct RoutesView: View {
                             }
                         }
                     }
-                    .frame(maxHeight: 250) // you can adjust this
+                    .frame(maxHeight: 250)
                     .padding(.horizontal)
                     
                     Spacer()
@@ -75,14 +69,6 @@ struct RoutesView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
                 .padding(.top, 60) //
-            }
-            
-            if showRouteDetailView, let route = selectedRoute {
-                RouteDetailView(showMapView: $showMapView,
-                                showRoutesView: $showRoutesView,
-                                showNewNoteView: $showNewNoteView,
-                                showProfileView: $showProfileView,
-                                showRouteDetailView: $showRouteDetailView)
             }
         }
         .ignoresSafeArea()
@@ -96,10 +82,11 @@ struct RoutesView: View {
 }
 
 #Preview {
-    RoutesView(
+    RouteDetailView(
         showMapView: .constant(false),
-        showRoutesView: .constant(true),
+        showRoutesView: .constant(false),
         showNewNoteView: .constant(false),
-        showProfileView: .constant(false)
+        showProfileView: .constant(false),
+        showRouteDetailView: .constant(true)
     )
 }

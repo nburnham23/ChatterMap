@@ -16,7 +16,6 @@ struct ChatterMapView: View {
     @State private var showViewNoteView = false
     
     @StateObject private var notesVM = NotesViewModel()
-    
     @Environment(LocationManager.self) var locationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     // don't let the user move the map

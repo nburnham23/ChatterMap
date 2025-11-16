@@ -42,16 +42,29 @@ struct ViewNoteView: View {
                         
                         Spacer()
                         
-                        Button("\u{1F516}") {
-                            Task {
-                                try? await firestoreService.saveNoteToUser(userID: user.id, noteID: note.id)
-                                if !user.savedNotes.contains(note.id) {
-                                    user.savedNotes.append(note.id)
+                        if !user.savedNotes.contains(note.id) {
+                            Button("Save") {
+                                Task {
+                                    try? await firestoreService.saveNoteToUser(userID: user.id, noteID: note.id)
+                                    if !user.savedNotes.contains(note.id) {
+                                        user.savedNotes.append(note.id)
+                                    }
+                                    print("Note saved successfully.")
                                 }
-                                print("Note saved successfully.")
                             }
+                            .foregroundColor(.red)
+                        } else {
+                            Button("Unsave") {
+                                Task {
+                                    try? await firestoreService.unsaveNoteToUser(userID: user.id, noteID: note.id)
+                                    if user.savedNotes.contains(note.id) {
+                                        user.savedNotes.removeAll{ $0 == note.id}
+                                    }
+                                    print("Note unsaved successfully.")
+                                }
+                            }
+                            .foregroundColor(.red)
                         }
-                        .foregroundColor(.red)
                     }
                     .padding(.horizontal)
                     .padding(.top)
