@@ -14,7 +14,7 @@ struct RouteCell: View {
             Text(route.userID)
                 .font(.caption)
                 .foregroundStyle(.gray)
-            Text(route.id)
+            Text(route.routeName)
                 .font(.body)
         }
         .padding()

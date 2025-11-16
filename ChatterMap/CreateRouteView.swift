@@ -1,5 +1,5 @@
 //
-//  RouteDetailView.swift
+//  CreateRouteView.swift
 //  ChatterMap
 //
 //  Created by jared on 11/16/25.
@@ -7,17 +7,13 @@
 
 import SwiftUI
 
-struct RouteDetailView: View {
-    @Binding var showMapView: Bool
+struct CreateRouteView: View {
     @Binding var showRoutesView: Bool
-    @Binding var showNewNoteView: Bool
-    @Binding var showProfileView: Bool
-    @Binding var showRouteDetailView: Bool
-    @Binding var selectedRoute: Route
-    
-    @State var includedNotes: [Note] = []
+    @Binding var showCreateRouteView: Bool
     
     @EnvironmentObject var user: User
+    
+    @State private var savedNotes: [Note] = []
     
     let firestoreService = FirestoreService()
 
@@ -31,7 +27,7 @@ struct RouteDetailView: View {
                 VStack(spacing: 16) {
                     HStack {
                         Button("Close") {
-                            showRouteDetailView = false
+                            showCreateRouteView = false
                             showRoutesView = true
                         }
                         .foregroundColor(.red)
@@ -41,19 +37,19 @@ struct RouteDetailView: View {
                     .padding(.horizontal)
                     .padding(.top)
                     
-                    Text("Route details")
+                    Text("Choose notes for route")
                         .font(.title2)
                         .fontWeight(.semibold)
                         .padding(.bottom, 10)
                     
-                    // make this scroll through notes in the route
+                    // scroll through user's saved notes
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            ForEach(includedNotes) { n in
+                            ForEach(savedNotes) { n in
                                 NoteCell(note: n)
                             }
-                            if includedNotes.isEmpty {
-                                Text("No notes in this route.")
+                            if savedNotes.isEmpty {
+                                Text("No saved posts yet.")
                                     .foregroundColor(.gray)
                                     .padding()
                             }
@@ -76,13 +72,7 @@ struct RouteDetailView: View {
         .ignoresSafeArea()
         .onAppear {
             Task {
-                var tempIncludedNotes: [Note] = []
-                for noteID in selectedRoute.includedNotes {
-                    if let note = await firestoreService.getNote(id: noteID) {
-                        tempIncludedNotes.append(note)
-                    }
-                }
-                includedNotes = tempIncludedNotes
+                savedNotes = await firestoreService.getSavedNotesByUser(parentUserID: user.id)
             }
         }
         .animation(.easeInOut, value: showRoutesView)
@@ -90,12 +80,8 @@ struct RouteDetailView: View {
 }
 
 #Preview {
-    RouteDetailView(
-        showMapView: .constant(false),
+    CreateRouteView(
         showRoutesView: .constant(false),
-        showNewNoteView: .constant(false),
-        showProfileView: .constant(false),
-        showRouteDetailView: .constant(false),
-        selectedRoute: .constant(Route.preview)
+        showCreateRouteView: .constant(false)
     )
 }

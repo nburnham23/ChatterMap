@@ -13,3 +13,12 @@ struct Route: Identifiable, Codable {
     var includedNotes: [String]
     var userID: String
 }
+
+extension Route {
+    static let preview = Route(
+        id: "testID12345",
+        routeName: "testRoute",
+        includedNotes: [],
+        userID: "exampleUser"
+    )
+}

@@ -13,11 +13,12 @@ struct RoutesView: View {
     @Binding var showNewNoteView: Bool
     @Binding var showProfileView: Bool
     @State private var showRouteDetailView = false
+    @State private var showCreateRouteView = false
     
     @EnvironmentObject var user: User
     
     @State private var nearbyRoutes: [Route] = []
-    @State private var selectedRoute: Route? = nil
+    @State private var selectedRoute: Route = Route.preview
 
     let firestoreService = FirestoreService()
 
@@ -37,6 +38,13 @@ struct RoutesView: View {
                         .foregroundColor(.red)
                         
                         Spacer()
+                        
+                        Button("+") {
+                            showCreateRouteView = true
+                        }
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.blue)
                     }
                     .padding(.horizontal)
                     .padding(.top)
@@ -63,7 +71,7 @@ struct RoutesView: View {
                             }
                         }
                     }
-                    .frame(maxHeight: 250) // you can adjust this
+                    .frame(maxHeight: 250)
                     .padding(.horizontal)
                     
                     Spacer()
@@ -77,12 +85,17 @@ struct RoutesView: View {
                 .padding(.top, 60) //
             }
             
-            if showRouteDetailView, let route = selectedRoute {
+            if showRouteDetailView {
                 RouteDetailView(showMapView: $showMapView,
                                 showRoutesView: $showRoutesView,
                                 showNewNoteView: $showNewNoteView,
                                 showProfileView: $showProfileView,
-                                showRouteDetailView: $showRouteDetailView)
+                                showRouteDetailView: $showRouteDetailView,
+                                selectedRoute: $selectedRoute)
+            }
+            if showCreateRouteView {
+                CreateRouteView(showRoutesView: $showRoutesView,
+                                showCreateRouteView: $showCreateRouteView)
             }
         }
         .ignoresSafeArea()

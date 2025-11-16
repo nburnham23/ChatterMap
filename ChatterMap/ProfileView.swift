@@ -143,7 +143,7 @@ struct ProfileView: View {
                             }
                         }
                     }
-                    .frame(maxHeight: 250) // you can adjust this
+                    .frame(maxHeight: 250)
                     .padding(.horizontal)
                 }
                 
