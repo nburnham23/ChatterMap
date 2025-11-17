@@ -1,17 +1,16 @@
-//
 //  FirestoreService.swift
 //  ChatterMap
 //  ALL Database Getters/Setters
 //  Created by user285571 on 10/22/25.
 //
+
 import FirebaseCore
 import FirebaseFirestore
 
 class FirestoreService {
     let db = Firestore.firestore()
     
-  // USER FUNCTIONS
-    // Create User
+
     func createUser(user: User) async {
         do {
             try await db.collection("Users").document(user.id).setData([
@@ -26,35 +25,36 @@ class FirestoreService {
         }
     }
     
-    func saveNoteToUser(userID: String, noteID: String) async throws{
+    func saveNoteToUser(userID: String, noteID: String) async throws {
         let userRef = db.collection("Users").document(userID)
-            try await userRef.updateData([
-                "savedNotes": FieldValue.arrayUnion([noteID])
-            ])
+        try await userRef.updateData([
+            "savedNotes": FieldValue.arrayUnion([noteID])
+        ])
     }
     
-    func unsaveNoteToUser(userID: String, noteID: String) async throws{
+    func unsaveNoteToUser(userID: String, noteID: String) async throws {
         let userRef = db.collection("Users").document(userID)
-            try await userRef.updateData([
-                "savedNotes": FieldValue.arrayRemove([noteID])
-            ])
+        try await userRef.updateData([
+            "savedNotes": FieldValue.arrayRemove([noteID])
+        ])
     }
     
     func getUser(withId id: String) async -> User? {
         let docRef = db.collection("Users").document(id)
         do {
-                let document = try await docRef.getDocument()
-                if let user = try? document.data(as: User.self) {
-                    return user
-                } else {
-                    print("Failed to decode user data")
-                    return nil
-                }
-            } catch {
-                print("Error fetching user: \(error)")
+            let document = try await docRef.getDocument()
+            if let user = try? document.data(as: User.self) {
+                return user
+            } else {
+                print("Failed to decode user data")
                 return nil
             }
+        } catch {
+            print("Error fetching user: \(error)")
+            return nil
+        }
     }
+    
     func getUserById(uid: String) async -> User? {
         do {
             let document = try await db.collection("Users").document(uid).getDocument()
@@ -65,14 +65,7 @@ class FirestoreService {
         }
     }
     
-    
-    
-    
-    
-    
-    
-  // NOTE FUNCTIONS
-    // Create Note
+
     func createNote(note: Note) async {
         do {
             try await db.collection("Notes").document(note.id).setData([
@@ -115,22 +108,22 @@ class FirestoreService {
     
     func getSavedNotesByUser(parentUserID: String) async -> [Note] {
         do {
-                let userDoc = try await db.collection("Users").document(parentUserID).getDocument()
-                
-                let userData = try userDoc.data(as: User.self)
-                
-                var savedNotes: [Note] = []
-                for noteID in userData.savedNotes {
-                    if let note = await getNote(id: noteID) {
-                        savedNotes.append(note)
-                    }
+            let userDoc = try await db.collection("Users").document(parentUserID).getDocument()
+            
+            let userData = try userDoc.data(as: User.self)
+            
+            var savedNotes: [Note] = []
+            for noteID in userData.savedNotes {
+                if let note = await getNote(id: noteID) {
+                    savedNotes.append(note)
                 }
-                return savedNotes
-                
-            } catch {
-                print("Error fetching saved notes for user \(parentUserID): \(error)")
-                return []
             }
+            return savedNotes
+            
+        } catch {
+            print("Error fetching saved notes for user \(parentUserID): \(error)")
+            return []
+        }
     }
     
     func getAllNotes() async -> [Note] {
@@ -157,13 +150,6 @@ class FirestoreService {
         }
     }
 
-    
-    
-    
-    
-    
-    
-  // COMMENT FUNCTIONS
     func createComment(comment: Comment) async {
         do {
             try await db.collection("Comments").document(comment.id).setData([
@@ -194,11 +180,7 @@ class FirestoreService {
         }
     }
     
-    
-    
-    
-    
-  // ROUTE FUNCTIONS
+
     func getAllRoutes() async -> [Route] {
         do {
             let snapshot = try await db.collection("Routes").getDocuments()
@@ -209,6 +191,53 @@ class FirestoreService {
         } catch {
             print("Error fetching routes: \(error)")
             return []
+        }
+    }
+
+    // ========
+    // NEW CODE
+    // ========
+    func updateCommentVote(commentID: String, newCount: Int) async {
+        do {
+            try await db.collection("Comments").document(commentID).updateData([
+                "voteCount": newCount
+            ])
+            print("Comment vote updated")
+        } catch {
+            print("Error updating comment vote: \(error)")
+        }
+    }
+
+    // COMMENT TIMESTAMP
+    func addTimestampToComment(commentID: String, timestamp: Date) async {
+        do {
+            try await db.collection("Comments").document(commentID).updateData([
+                "timestamp": Timestamp(date: timestamp)
+            ])
+        } catch {
+            print("Error adding timestamp: \(error)")
+        }
+    }
+
+    // NOTE TIMESTAMP
+    func addTimestampToNote(noteID: String, timestamp: Date) async {
+        do {
+            try await db.collection("Notes").document(noteID).updateData([
+                "timestamp": Timestamp(date: timestamp)
+            ])
+        } catch {
+            print("Error adding timestamp to note: \(error)")
+        }
+    }
+
+    // GET USERNAME BY ID
+    func getUsernameByID(userID: String) async -> String {
+        do {
+            let doc = try await db.collection("Users").document(userID).getDocument()
+            return doc.get("username") as? String ?? "Unknown User"
+        } catch {
+            print("Error reading username: \(error)")
+            return "Unknown User"
         }
     }
 }
