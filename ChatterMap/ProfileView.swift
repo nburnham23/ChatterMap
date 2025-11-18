@@ -19,6 +19,11 @@ struct ProfileView: View {
     @State private var savedNotes: [Note] = []
 
     @State private var selectedButton: String? = nil
+    
+    @State private var showingUnsaveAlert = false
+    @State private var showingDeleteAlert = false
+    @State private var noteToDelete: Note? = nil
+    @State private var noteToUnsave: Note? = nil
 
     @Binding var showProfileView: Bool
     @Binding var showMapView: Bool
@@ -119,7 +124,26 @@ struct ProfileView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(postedNotes) { n in
-                                NoteCell(note: n)
+                                NoteCell(note: n) {
+                                    Button {
+                                        noteToDelete = n
+                                        showingDeleteAlert = true
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                    }
+                                }
+                                .alert("Are you sure you want to delete it?", isPresented: $showingDeleteAlert) {
+                                    Button("Delete", role: .destructive) {
+                                        Task {
+                                            if let note = noteToDelete {
+                                                await firestoreService.deleteNote(noteID: note.id)
+                                                postedNotes.removeAll { $0.id == note.id }
+                                            }
+                                        }
+                                    }
+                                    Button("Cancel", role: .cancel) {}
+                                }
                             }
                             if postedNotes.isEmpty {
                                 Text("No posts yet.")
@@ -134,7 +158,26 @@ struct ProfileView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(savedNotes) { n in
-                                NoteCell(note: n)
+                                NoteCell(note: n) {
+                                    Button {
+                                        noteToUnsave = n
+                                        showingUnsaveAlert = true
+                                    } label: {
+                                        Image(systemName: "bookmark.slash")
+                                            .foregroundColor(.orange)
+                                    }
+                                }
+                                .alert("Unsave this note?", isPresented: $showingUnsaveAlert) {
+                                    Button("Unsave", role: .destructive) {
+                                        Task {
+                                            if let note = noteToUnsave {
+                                                try? await firestoreService.unsaveNoteToUser(userID: user.id, noteID: note.id)
+                                                savedNotes.removeAll { $0.id == note.id }
+                                            }
+                                        }
+                                    }
+                                    Button("Cancel", role: .cancel) {}
+                                }
                             }
                             if savedNotes.isEmpty {
                                 Text("No saved posts yet.")

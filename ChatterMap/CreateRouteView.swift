@@ -14,8 +14,17 @@ struct CreateRouteView: View {
     @EnvironmentObject var user: User
     
     @State private var savedNotes: [Note] = []
+    @State private var selectedNotes: Set<String> = []
     
     let firestoreService = FirestoreService()
+    
+    func toggleSelection(_ note: Note) {
+        if selectedNotes.contains(note.id) {
+            selectedNotes.remove(note.id)
+        } else {
+            selectedNotes.insert(note.id)
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -46,7 +55,15 @@ struct CreateRouteView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(savedNotes) { n in
-                                NoteCell(note: n)
+                                NoteCell(note: n) {
+                                    Button {
+                                        toggleSelection(n)
+                                    } label: {
+                                        Image(systemName: selectedNotes.contains(n.id) ? "checkmark.circle.fill" : "circle")
+                                            .foregroundColor(.blue)
+                                            .font(.title3)
+                                    }
+                                }
                             }
                             if savedNotes.isEmpty {
                                 Text("No saved posts yet.")

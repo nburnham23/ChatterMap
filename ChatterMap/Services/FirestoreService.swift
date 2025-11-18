@@ -89,6 +89,31 @@ class FirestoreService {
         }
     }
     
+    // delete note
+    func deleteNote(noteID: String) async {
+        do {
+            // delete the note
+            try await db.collection("Notes").document(noteID).delete()
+            print("Note deleted from Notes collection.")
+            // remove note from all savedNotes
+            let usersSnapshot = try await db.collection("Users").getDocuments()
+            for doc in usersSnapshot.documents {
+                var savedNotes = doc.data()["savedNotes"] as? [String] ?? []
+                if savedNotes.contains(noteID) {
+                    savedNotes.removeAll { $0 == noteID }
+                    try await db.collection("Users").document(doc.documentID).updateData([
+                        "savedNotes": savedNotes
+                    ])
+                    print("Removed note \(noteID) from user \(doc.documentID)'s savedNotes")
+                }
+            }
+            print("Cleanup complete.")
+        } catch {
+            print("Error deleting note everywhere: \(error)")
+        }
+    }
+    
+    
     func getNote(id: String) async -> Note? {
         do {
             let document = try await db.collection("Notes").document(id).getDocument()
