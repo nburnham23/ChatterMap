@@ -5,7 +5,6 @@
 //  Created by jared on 11/3/25.
 //
 
-
 import SwiftUI
 
 struct ViewNoteView: View {
@@ -25,6 +24,20 @@ struct ViewNoteView: View {
     @EnvironmentObject var user: User
     
     let firestoreService = FirestoreService()
+    
+    // Local state for voting
+    @State private var voteCount: Int
+    @State private var hasVoted = false
+    
+    init(note: Note, showMapView: Binding<Bool>, showRoutesView: Binding<Bool>, showNewNoteView: Binding<Bool>, showProfileView: Binding<Bool>, showViewNoteView: Binding<Bool>) {
+        self.note = note
+        self._showMapView = showMapView
+        self._showRoutesView = showRoutesView
+        self._showNewNoteView = showNewNoteView
+        self._showProfileView = showProfileView
+        self._showViewNoteView = showViewNoteView
+        self._voteCount = State(initialValue: note.voteCount)
+    }
     
     var body: some View {
         ZStack {
@@ -72,15 +85,69 @@ struct ViewNoteView: View {
                     Text("Note written by \(note.userID)")
                         .font(.title2)
                         .fontWeight(.semibold)
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 5)
+                    
+                    if let timestamp = note.timestamp {
+                        Text("Posted: \(timestamp.formatted(date: .abbreviated, time: .shortened))")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.bottom, 5)
+                    } else {
+                        Text("Posted: Time unknown")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.bottom, 5)
+                    }
                     
                     Text(note.noteText)
                         .font(.title2)
                         .padding(.bottom, 10)
                     
-                    Text("Upvote count: \(note.voteCount)")
-                        .font(.title2)
-                        .padding(.bottom, 10)
+                    // Vote buttons + vote count
+                    HStack {
+                        Button(action: {
+                            if !hasVoted {
+                                voteCount += 1
+                                hasVoted = true
+                                var updatedNote = note
+                                updatedNote.voteCount = voteCount
+                                Task {
+                                    await firestoreService.updateVoteCount(note: updatedNote)
+                                }
+                            }
+                        }) {
+                            Image(systemName: "hand.thumbsup.fill")
+                                .foregroundColor(.green)
+                                .font(.title)
+                        }
+                        
+                        Spacer()
+                        
+                        Text("\(voteCount)")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(voteCount > 0 ? .green : (voteCount < 0 ? .red : .black))
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            if !hasVoted {
+                                voteCount -= 1
+                                hasVoted = true
+                                var updatedNote = note
+                                updatedNote.voteCount = voteCount
+                                Task {
+                                    await firestoreService.updateVoteCount(note: updatedNote)
+                                }
+                            }
+                        }) {
+                            Image(systemName: "hand.thumbsdown.fill")
+                                .foregroundColor(.red)
+                                .font(.title)
+                        }
+                    }
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 10)
                     
                     Spacer()
                     
@@ -96,13 +163,12 @@ struct ViewNoteView: View {
                             }
                         }
                     }
-                    .frame(maxHeight: 250) // you can adjust this
+                    .frame(maxHeight: 250)
                     .padding(.horizontal)
                     
                     VStack(spacing: 8) {
                         HStack {
                             Button("Close") {
-                                // this line closes the keyboard
                                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                             }
                             .foregroundColor(.red)
@@ -110,13 +176,9 @@ struct ViewNoteView: View {
                             Spacer()
                             
                             Button("Post") {
-                                //Records coordinates of user when posting note
                                 let latitude = locationManager.userLocation?.coordinate.latitude ?? 0.0
                                 let longitude = locationManager.userLocation?.coordinate.longitude ?? 0.0
-                                // For now, just print the note text
-                                // TODO: upload to firebase
-                                print("Posted note: \(commentText)")
-                                print("(\(latitude), \(longitude)")
+                                
                                 let comment = Comment(
                                     id: UUID().uuidString,
                                     parentNoteID: note.id,
