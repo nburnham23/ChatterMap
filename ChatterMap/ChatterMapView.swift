@@ -52,12 +52,10 @@ struct ChatterMapView: View {
                 
                 // User location
                 UserAnnotation()
-            }
-            .task {
-                await notesVM.loadNotes()
-            }
+            } 
             .onAppear {
                 updateCameraPosition()
+                notesVM.startListening()
             }
             
             // View switching logic

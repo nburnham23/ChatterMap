@@ -116,6 +116,7 @@ struct LoginView: View {
         // Fetch user from Firestore
         if let fetchedUser = await firestoreService.getUserById(uid: uid) {
             // Update the environment object on main thread
+            // TODO: get rid of main actor
             await MainActor.run {
                 user.updateUser(id: fetchedUser.id, username: fetchedUser.username)
                 user.postedNotes = fetchedUser.postedNotes

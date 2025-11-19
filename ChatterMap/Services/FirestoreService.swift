@@ -10,7 +10,22 @@ import FirebaseFirestore
 class FirestoreService {
     let db = Firestore.firestore()
     
-  // USER FUNCTIONS
+    func listenToAllNotes(completion: @escaping ([Note]) -> Void) -> ListenerRegistration {
+        return db.collection("Notes").addSnapshotListener { snapshot, error in
+            guard let documents = snapshot?.documents else {
+                print("Error fetching notes: \(error?.localizedDescription ?? "Unknown error")")
+                completion([])
+                return
+            }
+            
+            let notes = documents.compactMap { document in
+                try? document.data(as: Note.self)
+            }
+            completion(notes)
+        }
+    }
+    
+    // USER FUNCTIONS
     // Create User
     func createUser(user: User) async {
         do {
@@ -134,6 +149,10 @@ class FirestoreService {
     }
     
     func getAllNotes() async -> [Note] {
+        /*
+         get current time
+         posted_time - note_time < 3 days
+         */
         do {
             let snapshot = try await db.collection("Notes").getDocuments()
             let notes = snapshot.documents.compactMap { document in
@@ -144,6 +163,18 @@ class FirestoreService {
             print("Error fetching notes: \(error)")
             return []
         }
+    }
+    func listenToUpdates() async {
+        db.collection("Notes")
+          .addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+              print("Error fetching documents: \(error!)")
+              return
+            }
+            let notes = documents.compactMap { document in
+                try? document.data(as: Note.self)
+            }
+          }
     }
     
     func updateVoteCount(note: Note) async {
