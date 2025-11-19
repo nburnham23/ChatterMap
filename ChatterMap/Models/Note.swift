@@ -14,5 +14,5 @@ struct Note: Identifiable, Codable {
     var voteCount: Int
     var latitude: Double
     var longitude: Double
-    var timestamp: Date?
+    var timestamp: Date
 }

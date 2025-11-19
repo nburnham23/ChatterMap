@@ -89,17 +89,12 @@ struct ViewNoteView: View {
                         .fontWeight(.semibold)
                         .padding(.bottom, 5)
                     
-                    if let timestamp = note.timestamp {
-                        Text("Posted: \(timestamp.formatted(date: .abbreviated, time: .shortened))")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 5)
-                    } else {
-                        Text("Posted: Time unknown")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 5)
-                    }
+                    
+                    Text("Posted: \(note.timestamp.formatted(date: .abbreviated, time: .shortened))")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 5)
+                    
                     
                     Text(note.noteText)
                         .font(.title2)
