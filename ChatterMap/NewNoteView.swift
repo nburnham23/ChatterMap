@@ -1,12 +1,4 @@
-//
-//  NewNoteView.swift
-//  ChatterMap
-//
-//  Created by jared on 10/15/25.
-//
-
 import SwiftUI
-
 
 struct NewNoteView: View {
     @Binding var showMapView: Bool
@@ -34,20 +26,17 @@ struct NewNoteView: View {
                     Spacer()
                     
                     Button("Post") {
-                        //Records coordinates of user when posting note
                         let latitude = locationManager.userLocation?.coordinate.latitude ?? 0.0
                         let longitude = locationManager.userLocation?.coordinate.longitude ?? 0.0
-                        print("Posted note: \(noteText)")
-                        print("(\(latitude), \(longitude)")
                         
                         let note = Note(
                             id: UUID().uuidString,
-                            // TODO: change this
                             userID: user.id,
                             noteText: noteText,
                             voteCount: 0,
                             latitude: latitude,
                             longitude: longitude,
+                            timestamp: Date() // <-- new notes get timestamp
                         )
                         
                         Task{

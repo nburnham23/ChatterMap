@@ -8,12 +8,11 @@
 import Foundation
 
 struct Note: Identifiable, Codable {
-    // TODO: add dates
     var id: String
     var userID: String
     var noteText: String
     var voteCount: Int
     var latitude: Double
     var longitude: Double
+    var timestamp: Date?
 }
-

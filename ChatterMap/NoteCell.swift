@@ -7,15 +7,28 @@
 
 import SwiftUI
 
-struct NoteCell: View {
+struct NoteCell<Trailing: View>: View {
     let note: Note
+    let trailing: Trailing
+    
+    init(note: Note, @ViewBuilder trailing: () -> Trailing = {EmptyView()}) {
+        self.note = note
+        self.trailing = trailing()
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(note.userID)
-                .font(.caption)
-                .foregroundStyle(.gray)
-            Text(note.noteText)
-                .font(.body)
+        HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(note.userID)
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+                Text(note.noteText)
+                    .font(.body)
+            }
+            
+            Spacer()
+
+            trailing
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
