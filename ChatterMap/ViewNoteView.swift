@@ -20,6 +20,7 @@ struct ViewNoteView: View {
     @State private var commentText = ""
     
     @State private var comments: [Comment] = []
+    @State private var localSavedNotes: [String] = []
     
     @EnvironmentObject var user: User
     
@@ -39,6 +40,23 @@ struct ViewNoteView: View {
         self._voteCount = State(initialValue: note.voteCount)
     }
     
+    func toggleSavedState(_ note: Note) {
+        Task {
+            if localSavedNotes.contains(note.id) {
+                try? await firestoreService.unsaveNoteToUser(userID: user.id, noteID: note.id)
+                localSavedNotes.removeAll { $0 == note.id }
+                user.savedNotes.removeAll { $0 == note.id }
+                print("Note unsaved successfully.")
+            } else {
+                // SAVE
+                try? await firestoreService.saveNoteToUser(userID: user.id, noteID: note.id)
+                localSavedNotes.append(note.id)
+                user.savedNotes.append(note.id)
+                print("Note saved successfully.")
+            }
+        }
+    }
+    
     var body: some View {
         ZStack {
             Color.black.opacity(0.001)
@@ -55,28 +73,12 @@ struct ViewNoteView: View {
                         
                         Spacer()
                         
-                        if !user.savedNotes.contains(note.id) {
-                            Button("Save") {
-                                Task {
-                                    try? await firestoreService.saveNoteToUser(userID: user.id, noteID: note.id)
-                                    if !user.savedNotes.contains(note.id) {
-                                        user.savedNotes.append(note.id)
-                                    }
-                                    print("Note saved successfully.")
-                                }
-                            }
-                            .foregroundColor(.red)
-                        } else {
-                            Button("Unsave") {
-                                Task {
-                                    try? await firestoreService.unsaveNoteToUser(userID: user.id, noteID: note.id)
-                                    if user.savedNotes.contains(note.id) {
-                                        user.savedNotes.removeAll{ $0 == note.id}
-                                    }
-                                    print("Note unsaved successfully.")
-                                }
-                            }
-                            .foregroundColor(.red)
+                        Button {
+                            toggleSavedState(note)
+                        } label: {
+                            Image(systemName: localSavedNotes.contains(note.id) ? "bookmark" : "bookmark.slash")
+                                .foregroundColor(.red)
+                                .font(.title3)
                         }
                     }
                     .padding(.horizontal)
@@ -176,8 +178,6 @@ struct ViewNoteView: View {
                             Spacer()
                             
                             Button("Post") {
-                                let latitude = locationManager.userLocation?.coordinate.latitude ?? 0.0
-                                let longitude = locationManager.userLocation?.coordinate.longitude ?? 0.0
                                 
                                 let comment = Comment(
                                     id: UUID().uuidString,
@@ -215,6 +215,7 @@ struct ViewNoteView: View {
         }
         .ignoresSafeArea(.container)
         .onAppear {
+            localSavedNotes = user.savedNotes
             Task {
                 comments = await firestoreService.getCommentsByNote(parentNoteID: note.id)
             }

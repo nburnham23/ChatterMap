@@ -19,7 +19,7 @@ class FirestoreService {
                 "postedNotes": user.postedNotes,
                 "savedNotes": user.savedNotes
             ])
-            print("Document successfully written!")
+            print("User successfully written!")
         } catch {
             print("Error writing document: \(error)")
         }
@@ -76,7 +76,7 @@ class FirestoreService {
                 "latitude": note.latitude,
                 "longitude": note.longitude
             ])
-            print("Document successfully written!")
+            print("Note successfully written!")
         } catch {
             print("Error writing document: \(error)")
         }
@@ -184,7 +184,7 @@ class FirestoreService {
                 "commentText": comment.commentText,
                 "voteCount": comment.voteCount,
             ])
-            print("Document successfully written!")
+            print("Comment successfully written!")
         } catch {
             print("Error writing document: \(error)")
         }
@@ -218,6 +218,22 @@ class FirestoreService {
             return []
         }
     }
+    
+    func createRoute(route: Route) async {
+        do {
+            try await db.collection("Routes").document(route.id).setData([
+                "id": route.id,
+                "routeName": route.routeName,
+                "includedNotes": route.includedNotes,
+                "userID": route.userID,
+            ])
+            print("Route successfully written!")
+        } catch {
+            print("Error writing document: \(error)")
+        }
+    }
+    
+    
 
     // ========
     // NEW CODE
