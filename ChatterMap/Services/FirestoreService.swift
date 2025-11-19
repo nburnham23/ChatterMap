@@ -9,7 +9,6 @@ import FirebaseFirestore
 
 class FirestoreService {
     let db = Firestore.firestore()
-    
 
     func createUser(user: User) async {
         do {
