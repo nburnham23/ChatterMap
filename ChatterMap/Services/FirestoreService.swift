@@ -90,7 +90,8 @@ class FirestoreService {
                 "noteText": note.noteText,
                 "voteCount": note.voteCount,
                 "latitude": note.latitude,
-                "longitude": note.longitude
+                "longitude": note.longitude,
+                "timestamp": note.timestamp
             ])
             print("Note successfully written!")
         } catch {
