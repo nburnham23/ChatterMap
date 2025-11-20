@@ -25,6 +25,20 @@ class FirestoreService {
         }
     }
     
+    func listenToAllRoutes(completion: @escaping ([Route]) -> Void) -> ListenerRegistration {
+        return db.collection("Routes").addSnapshotListener { snapshot, error in
+            guard let documents = snapshot?.documents else {
+                completion([])
+                return
+            }
+
+            let routes = documents.compactMap { doc in
+                try? doc.data(as: Route.self)
+            }
+            completion(routes)
+            }
+    }
+    
     // USER FUNCTIONS
     // Create User
     func createUser(user: User) async {
@@ -184,6 +198,7 @@ class FirestoreService {
             return []
         }
     }
+    
     func listenToUpdates() async {
         db.collection("Notes")
           .addSnapshotListener { querySnapshot, error in
@@ -196,7 +211,7 @@ class FirestoreService {
             }
           }
     }
-    
+     
     func updateVoteCount(note: Note) async {
         do {
             try await db.collection("Notes").document(note.id).updateData([

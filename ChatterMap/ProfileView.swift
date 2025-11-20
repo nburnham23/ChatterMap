@@ -164,16 +164,17 @@ struct ProfileView: View {
                                         showingUnsaveAlert = true
                                     } label: {
                                         Image(systemName: "bookmark.slash")
-                                            .foregroundColor(.orange)
+                                            .foregroundColor(.red)
                                     }
                                 }
                                 .alert("Unsave this note?", isPresented: $showingUnsaveAlert) {
                                     Button("Unsave", role: .destructive) {
+                                        guard let noteID = noteToUnsave?.id else { return }
+                                        
                                         Task {
-                                            if let note = noteToUnsave {
-                                                try? await firestoreService.unsaveNoteToUser(userID: user.id, noteID: note.id)
-                                                savedNotes.removeAll { $0.id == note.id }
-                                            }
+                                            try? await firestoreService.unsaveNoteToUser(userID: user.id, noteID: noteID)
+                                            savedNotes.removeAll { $0.id == noteID }
+                                            user.savedNotes = user.savedNotes.filter { $0 != noteID }
                                         }
                                     }
                                     Button("Cancel", role: .cancel) {}

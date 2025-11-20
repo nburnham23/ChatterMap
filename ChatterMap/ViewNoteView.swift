@@ -76,7 +76,7 @@ struct ViewNoteView: View {
                         Button {
                             toggleSavedState(note)
                         } label: {
-                            Image(systemName: localSavedNotes.contains(note.id) ? "bookmark" : "bookmark.slash")
+                            Image(systemName: localSavedNotes.contains(note.id) ? "bookmark.slash" : "bookmark")
                                 .foregroundColor(.red)
                                 .font(.title3)
                         }
@@ -214,6 +214,9 @@ struct ViewNoteView: View {
             Task {
                 comments = await firestoreService.getCommentsByNote(parentNoteID: note.id)
             }
+        }
+        .onChange(of: user.savedNotes) { newSavedNotes in
+            localSavedNotes = newSavedNotes
         }
         .animation(.easeInOut, value: showRoutesView)
     }
