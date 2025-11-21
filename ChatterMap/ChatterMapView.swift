@@ -15,7 +15,7 @@ struct ChatterMapView: View {
     @State private var showProfileView = false
     @State private var showViewNoteView = false
     
-    @StateObject private var notesVM = NotesViewModel()
+    @ObservedObject private var notesVM = NotesViewModel()
     @Environment(LocationManager.self) var locationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     // don't let the user move the map
@@ -55,7 +55,7 @@ struct ChatterMapView: View {
             } 
             .onAppear {
                 updateCameraPosition()
-                notesVM.startListening()
+                notesVM.fetchNotes()
             }
             
             // View switching logic

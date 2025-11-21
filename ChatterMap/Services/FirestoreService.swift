@@ -10,21 +10,6 @@ import FirebaseFirestore
 class FirestoreService {
     let db = Firestore.firestore()
     
-    func listenToAllNotes(completion: @escaping ([Note]) -> Void) -> ListenerRegistration {
-        return db.collection("Notes").addSnapshotListener { snapshot, error in
-            guard let documents = snapshot?.documents else {
-                print("Error fetching notes: \(error?.localizedDescription ?? "Unknown error")")
-                completion([])
-                return
-            }
-            
-            let notes = documents.compactMap { document in
-                try? document.data(as: Note.self)
-            }
-            completion(notes)
-        }
-    }
-    
     // USER FUNCTIONS
     // Create User
     func createUser(user: User) async {
@@ -169,12 +154,12 @@ class FirestoreService {
     }
     
     func getAllNotes() async -> [Note] {
-        /*
-         get current time
-         posted_time - note_time < 3 days
-         */
         do {
-            let snapshot = try await db.collection("Notes").getDocuments()
+            // TODO: this aint working
+            let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+            
+            let snapshot = try await db.collection("Notes").whereField("timestamp", isLessThan: oneWeekAgo)
+                .getDocuments()
             let notes = snapshot.documents.compactMap { document in
                 try? document.data(as: Note.self)
             }
@@ -183,18 +168,6 @@ class FirestoreService {
             print("Error fetching notes: \(error)")
             return []
         }
-    }
-    func listenToUpdates() async {
-        db.collection("Notes")
-          .addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-              print("Error fetching documents: \(error!)")
-              return
-            }
-            let notes = documents.compactMap { document in
-                try? document.data(as: Note.self)
-            }
-          }
     }
     
     func updateVoteCount(note: Note) async {
