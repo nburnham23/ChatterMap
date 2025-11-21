@@ -10,21 +10,6 @@ import FirebaseFirestore
 class FirestoreService {
     let db = Firestore.firestore()
     
-    func listenToAllNotes(completion: @escaping ([Note]) -> Void) -> ListenerRegistration {
-        return db.collection("Notes").addSnapshotListener { snapshot, error in
-            guard let documents = snapshot?.documents else {
-                print("Error fetching notes: \(error?.localizedDescription ?? "Unknown error")")
-                completion([])
-                return
-            }
-            
-            let notes = documents.compactMap { document in
-                try? document.data(as: Note.self)
-            }
-            completion(notes)
-        }
-    }
-    
     func listenToAllRoutes(completion: @escaping ([Route]) -> Void) -> ListenerRegistration {
         return db.collection("Routes").addSnapshotListener { snapshot, error in
             guard let documents = snapshot?.documents else {
@@ -190,23 +175,6 @@ class FirestoreService {
             let snapshot = try await db.collection("Notes").whereField("timestamp", isLessThan: oneWeekAgo)
                 .getDocuments()
             let notes = snapshot.documents.compactMap { document in
-                try? document.data(as: Note.self)
-            }
-            return notes
-        } catch {
-            print("Error fetching notes: \(error)")
-            return []
-        }
-    }
-    
-    func listenToUpdates() async {
-        db.collection("Notes")
-          .addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-              print("Error fetching documents: \(error!)")
-              return
-            }
-            let notes = documents.compactMap { document in
                 try? document.data(as: Note.self)
             }
             return notes
