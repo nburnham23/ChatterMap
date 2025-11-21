@@ -6,14 +6,17 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct RoutesView: View {
     @Binding var showMapView: Bool
     @Binding var showRoutesView: Bool
     @Binding var showNewNoteView: Bool
     @Binding var showProfileView: Bool
+    
     @State private var showRouteDetailView = false
     @State private var showCreateRouteView = false
+    @State private var routeListener: ListenerRegistration? = nil
     
     @EnvironmentObject var user: User
     
@@ -71,7 +74,7 @@ struct RoutesView: View {
                             }
                         }
                     }
-                    .frame(maxHeight: 250)
+                    .frame(maxHeight: 450)
                     .padding(.horizontal)
                     
                     Spacer()
@@ -100,9 +103,14 @@ struct RoutesView: View {
         }
         .ignoresSafeArea()
         .onAppear {
-            Task {
-                nearbyRoutes = await firestoreService.getAllRoutes()
+            routeListener?.remove()
+            
+            routeListener = firestoreService.listenToAllRoutes { routes in
+                self.nearbyRoutes = routes
             }
+        }
+        .onDisappear {
+            routeListener?.remove()
         }
         .animation(.easeInOut, value: showRoutesView)
     }

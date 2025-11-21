@@ -10,6 +10,35 @@ import FirebaseFirestore
 class FirestoreService {
     let db = Firestore.firestore()
     
+    func listenToAllNotes(completion: @escaping ([Note]) -> Void) -> ListenerRegistration {
+        return db.collection("Notes").addSnapshotListener { snapshot, error in
+            guard let documents = snapshot?.documents else {
+                print("Error fetching notes: \(error?.localizedDescription ?? "Unknown error")")
+                completion([])
+                return
+            }
+            
+            let notes = documents.compactMap { document in
+                try? document.data(as: Note.self)
+            }
+            completion(notes)
+        }
+    }
+    
+    func listenToAllRoutes(completion: @escaping ([Route]) -> Void) -> ListenerRegistration {
+        return db.collection("Routes").addSnapshotListener { snapshot, error in
+            guard let documents = snapshot?.documents else {
+                completion([])
+                return
+            }
+
+            let routes = documents.compactMap { doc in
+                try? doc.data(as: Route.self)
+            }
+            completion(routes)
+            }
+    }
+    
     // USER FUNCTIONS
     // Create User
     func createUser(user: User) async {
@@ -170,6 +199,23 @@ class FirestoreService {
         }
     }
     
+    func listenToUpdates() async {
+        db.collection("Notes")
+          .addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+              print("Error fetching documents: \(error!)")
+              return
+            }
+            let notes = documents.compactMap { document in
+                try? document.data(as: Note.self)
+            }
+            return notes
+        } catch {
+            print("Error fetching notes: \(error)")
+            return []
+        }
+    }
+     
     func updateVoteCount(note: Note) async {
         do {
             try await db.collection("Notes").document(note.id).updateData([
