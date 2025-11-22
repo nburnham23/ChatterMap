@@ -36,11 +36,12 @@ struct NewNoteView: View {
                             voteCount: 0,
                             latitude: latitude,
                             longitude: longitude,
-                            timestamp: Date() // <-- new notes get timestamp
+                            timestamp: Date()
                         )
                         
                         Task{
                             await firestoreService.createNote(note: note)
+                            noteText = ""
                         }
                         showNewNoteView = false
                         showMapView = true
@@ -54,6 +55,7 @@ struct NewNoteView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 10)
                     .autocapitalization(.sentences)
+                    
             }
             .padding()
             .background(.ultraThinMaterial)

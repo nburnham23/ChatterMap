@@ -17,7 +17,10 @@ class NotesViewModel: ObservableObject {
     private var db = Firestore.firestore()
     
     func fetchNotes(){
-        db.collection("Notes").addSnapshotListener{(querySnapshot, error) in
+        let oneWeekAgo = Date.now.addingTimeInterval(-604800)
+        
+        db.collection("Notes").whereField("timestamp", isGreaterThan: oneWeekAgo)
+            .addSnapshotListener{(querySnapshot, error) in
             guard let documents = querySnapshot?.documents else{
                 print("No notes")
                 return

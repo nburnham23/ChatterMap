@@ -11,13 +11,13 @@ import Foundation
 
 class CommentsViewModel: ObservableObject {
     @Published var comments: [Comment] = []
-    @Published var selectedNote: Note? = nil
     private let firestoreService = FirestoreService()
     
     private var db = Firestore.firestore()
     
-    func fetchComments(){
-        db.collection("Comments").addSnapshotListener{(querySnapshot, error) in
+    func fetchCommentsByUserID(userID: String){
+        db.collection("Comments").whereField("parentNoteID", isEqualTo: userID)
+            .addSnapshotListener{(querySnapshot, error) in
             guard let documents = querySnapshot?.documents else{
                 print("No comments")
                 return

@@ -82,19 +82,23 @@ class FirestoreService {
     
 
     func createNote(note: Note) async {
-        do {
-            try await db.collection("Notes").document(note.id).setData([
-                "id": note.id,
-                "userID": note.userID,
-                "noteText": note.noteText,
-                "voteCount": note.voteCount,
-                "latitude": note.latitude,
-                "longitude": note.longitude,
-                "timestamp": note.timestamp
-            ])
-            print("Note successfully written!")
-        } catch {
-            print("Error writing document: \(error)")
+        if note.noteText == "" {
+            return
+        } else{
+            do {
+                try await db.collection("Notes").document(note.id).setData([
+                    "id": note.id,
+                    "userID": note.userID,
+                    "noteText": note.noteText,
+                    "voteCount": note.voteCount,
+                    "latitude": note.latitude,
+                    "longitude": note.longitude,
+                    "timestamp": note.timestamp
+                ])
+                print("Note successfully written!")
+            } catch {
+                print("Error writing document: \(error)")
+            }
         }
     }
     
@@ -196,17 +200,21 @@ class FirestoreService {
     }
 
     func createComment(comment: Comment) async {
-        do {
-            try await db.collection("Comments").document(comment.id).setData([
-                "id": comment.id,
-                "userID": comment.userID,
-                "parentNoteID": comment.parentNoteID,
-                "commentText": comment.commentText,
-                "voteCount": comment.voteCount,
-            ])
-            print("Comment successfully written!")
-        } catch {
-            print("Error writing document: \(error)")
+        if (comment.commentText == ""){
+            return
+        }else {
+            do {
+                try await db.collection("Comments").document(comment.id).setData([
+                    "id": comment.id,
+                    "userID": comment.userID,
+                    "parentNoteID": comment.parentNoteID,
+                    "commentText": comment.commentText,
+                    "voteCount": comment.voteCount,
+                ])
+                print("Comment successfully written!")
+            } catch {
+                print("Error writing document: \(error)")
+            }
         }
     }
     
@@ -240,16 +248,20 @@ class FirestoreService {
     }
     
     func createRoute(route: Route) async {
-        do {
-            try await db.collection("Routes").document(route.id).setData([
-                "id": route.id,
-                "routeName": route.routeName,
-                "includedNotes": route.includedNotes,
-                "userID": route.userID,
-            ])
-            print("Route successfully written!")
-        } catch {
-            print("Error writing document: \(error)")
+        if route.includedNotes.isEmpty{
+            return
+        }else{
+            do {
+                try await db.collection("Routes").document(route.id).setData([
+                    "id": route.id,
+                    "routeName": route.routeName,
+                    "includedNotes": route.includedNotes,
+                    "userID": route.userID,
+                ])
+                print("Route successfully written!")
+            } catch {
+                print("Error writing document: \(error)")
+            }
         }
     }
     

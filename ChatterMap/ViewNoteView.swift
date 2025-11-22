@@ -19,10 +19,10 @@ struct ViewNoteView: View {
     @Environment(LocationManager.self) var locationManager
     @State private var commentText = ""
     
-    @State private var comments: [Comment] = []
     @State private var localSavedNotes: [String] = []
-    
+    @ObservedObject var commentsVM = CommentsViewModel()
     @EnvironmentObject var user: User
+    @State private var poster: User? = nil
     
     let firestoreService = FirestoreService()
     
@@ -62,7 +62,6 @@ struct ViewNoteView: View {
             Color.black.opacity(0.001)
             VStack {
                 Spacer()
-                
                 VStack(spacing: 16) {
                     HStack {
                         Button("Close") {
@@ -83,12 +82,18 @@ struct ViewNoteView: View {
                     }
                     .padding(.horizontal)
                     .padding(.top)
-                    
-                    Text("Note written by \(note.userID)")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .padding(.bottom, 5)
-                    
+                    if let poster = poster{
+                        Text("Note written by \(poster.username)")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .padding(.bottom, 5)
+                        
+                    } else{
+                        Text("Loading author...")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .padding(.bottom, 5)
+                    }
                     
                     Text("Posted: \(note.timestamp.formatted(date: .abbreviated, time: .shortened))")
                         .font(.caption)
@@ -150,10 +155,10 @@ struct ViewNoteView: View {
                     
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            ForEach(comments) { c in
+                            ForEach(commentsVM.comments) { c in
                                 CommentCell(comment: c)
                             }
-                            if comments.isEmpty {
+                            if commentsVM.comments.isEmpty {
                                 Text("No comments yet.")
                                     .foregroundColor(.gray)
                                     .padding()
@@ -165,15 +170,8 @@ struct ViewNoteView: View {
                     
                     VStack(spacing: 8) {
                         HStack {
-                            Button("Close") {
-                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                            }
-                            .foregroundColor(.red)
-                            
                             Spacer()
-                            
                             Button("Post") {
-                                
                                 let comment = Comment(
                                     id: UUID().uuidString,
                                     parentNoteID: note.id,
@@ -184,9 +182,9 @@ struct ViewNoteView: View {
                                 
                                 Task{
                                     await firestoreService.createComment(comment: comment)
+                                    commentText = ""
                                 }
                                 showNewNoteView = false
-                                showMapView = true
                             }
                             .foregroundColor(.blue)
                         }
@@ -211,9 +209,11 @@ struct ViewNoteView: View {
         .ignoresSafeArea(.container)
         .onAppear {
             localSavedNotes = user.savedNotes
-            Task {
-                comments = await firestoreService.getCommentsByNote(parentNoteID: note.id)
+            commentsVM.fetchCommentsByUserID(userID: note.id)
+            Task{
+                self.poster = await firestoreService.getUser(withId: note.userID)
             }
+            
         }
         .onChange(of: user.savedNotes) { newSavedNotes in
             localSavedNotes = newSavedNotes

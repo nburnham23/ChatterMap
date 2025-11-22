@@ -101,7 +101,7 @@ struct ChatterMapView: View {
     }
 }
 
-// MARK: - Custom Pin Shape
+// Custom Pin Shape
 struct MapPinShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
