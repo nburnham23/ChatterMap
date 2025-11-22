@@ -15,8 +15,8 @@ class CommentsViewModel: ObservableObject {
     
     private var db = Firestore.firestore()
     
-    func fetchCommentsByUserID(userID: String){
-        db.collection("Comments").whereField("parentNoteID", isEqualTo: userID)
+    func fetchCommentsByID(parentNoteID: String){
+        db.collection("Comments").whereField("parentNoteID", isEqualTo: parentNoteID)
             .addSnapshotListener{(querySnapshot, error) in
             guard let documents = querySnapshot?.documents else{
                 print("No comments")

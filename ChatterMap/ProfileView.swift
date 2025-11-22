@@ -18,7 +18,7 @@ struct ProfileView: View {
     @State private var postedNotes: [Note] = []
     @State private var savedNotes: [Note] = []
 
-    @State private var selectedButton: String? = nil
+    @State private var selectedButton: String = "Your Notes"
     
     @State private var showingUnsaveAlert = false
     @State private var showingDeleteAlert = false
@@ -56,8 +56,8 @@ struct ProfileView: View {
                     Text(userEmail)
                         .font(.subheadline)
                         .foregroundColor(.gray)
-
-                    Text("Total Notes: \(totalNotes)")
+                    
+                    Text("Total Notes: \(postedNotes.count)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }

@@ -20,7 +20,7 @@ struct ViewNoteView: View {
     @State private var commentText = ""
     
     @State private var localSavedNotes: [String] = []
-    @ObservedObject var commentsVM = CommentsViewModel()
+    @StateObject var commentsVM = CommentsViewModel()
     @EnvironmentObject var user: User
     @State private var poster: User? = nil
     
@@ -175,7 +175,7 @@ struct ViewNoteView: View {
                                 let comment = Comment(
                                     id: UUID().uuidString,
                                     parentNoteID: note.id,
-                                    userID: UUID().uuidString,
+                                    userID: user.id,
                                     commentText: commentText,
                                     voteCount: 0
                                 )
@@ -209,7 +209,7 @@ struct ViewNoteView: View {
         .ignoresSafeArea(.container)
         .onAppear {
             localSavedNotes = user.savedNotes
-            commentsVM.fetchCommentsByUserID(userID: note.id)
+            commentsVM.fetchCommentsByID(parentNoteID: note.id)
             Task{
                 self.poster = await firestoreService.getUser(withId: note.userID)
             }
