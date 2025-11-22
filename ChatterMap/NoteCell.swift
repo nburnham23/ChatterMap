@@ -10,6 +10,8 @@ import SwiftUI
 struct NoteCell<Trailing: View>: View {
     let note: Note
     let trailing: Trailing
+    @State private var user: User? = nil
+    let firestoreService = FirestoreService()
     
     init(note: Note, @ViewBuilder trailing: () -> Trailing = {EmptyView()}) {
         self.note = note
@@ -19,9 +21,15 @@ struct NoteCell<Trailing: View>: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
-                Text(note.userID)
-                    .font(.caption)
-                    .foregroundStyle(.gray)
+                if let user = user{
+                    Text(user.username)
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }else{
+                    Text("Phantom user")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }
                 Text(note.noteText)
                     .font(.body)
             }
@@ -29,6 +37,11 @@ struct NoteCell<Trailing: View>: View {
             Spacer()
 
             trailing
+        }
+        .onAppear{
+            Task{
+                self.user = await firestoreService.getUser(withId: note.userID)
+            }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)

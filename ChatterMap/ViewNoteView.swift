@@ -198,7 +198,7 @@ struct ViewNoteView: View {
                     }
                 }
                 .padding()
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground))
                 .cornerRadius(25)
                 .shadow(radius: 10)
                 .padding(.horizontal, 20)
